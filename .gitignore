@@ -1,0 +1,26 @@
+# Node modules for both frontend and backend
+client/node_modules/
+server/node_modules/
+
+# Build files
+client/dist/
+server/build/
+server/dist/
+
+# Environment variables
+client/.env
+server/.env
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# IDE settings
+.vscode/
+.idea/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
