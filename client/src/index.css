@@ -1,0 +1,9 @@
+/* Dark background, white text */
+body {
+  background-color: #1a1a1a; /* deep charcoal */
+  color: #ffffff;            /* pure white text */
+}
+/* 
+Optional tweaks you might want */
+a { color: #58a6ff; }         /* brighter links for contrast */
+pre, code { color: #fff; }    /* keep code blocks readable */
