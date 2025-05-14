@@ -4,6 +4,8 @@ import App from './App';
 import { BrowserRouter } from 'react-router-dom';
 import './index.css';
 import { AuthProvider } from './context/AuthContext';
+import 'katex/dist/katex.min.css';
+
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

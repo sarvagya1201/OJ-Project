@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getProblemById } from "../../services/problemService";
+import { BlockMath } from "react-katex";
+import ReactMarkdown from "react-markdown";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
 
 const ProblemDetails = () => {
   const { id } = useParams();
@@ -31,19 +35,36 @@ const ProblemDetails = () => {
       <p className="text-sm text-gray-500 mb-4">
         Difficulty: {problem.difficulty}
       </p>
+
       <div className="mb-4">
         <h2 className="font-semibold">Description</h2>
-        <p className="whitespace-pre-wrap">{problem.description}</p>
+        <div className="prose max-w-none">
+          <ReactMarkdown
+            children={problem.description}
+            remarkPlugins={[remarkMath]}
+            rehypePlugins={[rehypeKatex]}
+          />
+        </div>
       </div>
 
       <div className="mb-4">
         <h2 className="font-semibold">Sample Input</h2>
-        <pre className="bg-gray-100 p-2 rounded">{problem.sampleInput}</pre>
+        <pre className="bg-gray-100 p-2 rounded">
+          <ReactMarkdown
+            children={problem.sampleInput}
+            remarkPlugins={[remarkMath]}
+            rehypePlugins={[rehypeKatex]}
+          />
+        </pre>
       </div>
 
       <div className="mb-4">
         <h2 className="font-semibold">Sample Output</h2>
-        <pre className="bg-gray-100 p-2 rounded">{problem.sampleOutput}</pre>
+        <pre className="bg-gray-100 p-2 rounded"><ReactMarkdown
+            children={problem.sampleOutput}
+            remarkPlugins={[remarkMath]}
+            rehypePlugins={[rehypeKatex]}
+          /></pre>
       </div>
 
       <p className="text-sm text-gray-600 mb-1">
