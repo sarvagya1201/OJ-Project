@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import axiosInstance from "../services/axiosInstance";
 import { logoutUser } from "../services/authService";
+import ThemeToggle from "../components/ThemeToggle";
 
 const Header = () => {
   const { user, setUser } = useAuth();
@@ -20,11 +21,16 @@ const Header = () => {
   };
 
   return (
-    <header className="bg-gray-800 text-white px-4 py-3 flex justify-between items-center">
+    <header className="bg-gray-200 dark:bg-zinc-800 text-black dark:text-white px-4 py-3 flex justify-between items-center shadow">
       <Link to="/" className="text-xl font-bold">
         Online Judge
       </Link>
-      <div>
+
+      <div className="flex items-center gap-6">
+        <div>
+          <ThemeToggle />
+        </div>
+         
         {user ? (
           <div className="flex items-center gap-4">
             <span>Hello, {user.name}</span>
