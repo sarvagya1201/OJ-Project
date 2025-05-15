@@ -22,8 +22,8 @@ const Header = () => {
 
   return (
     <header className="bg-gray-200 dark:bg-zinc-800 text-black dark:text-white px-4 py-3 flex justify-between items-center shadow">
-      <Link to="/" className="text-xl font-bold">
-        Online Judge
+      <Link to="/" className="text-xl font-bold flex items-center gap-2">
+         <img src="../../logo.png" alt="Logo" className="h-10 w-auto dark:invert" />
       </Link>
 
       <div className="flex items-center gap-6">

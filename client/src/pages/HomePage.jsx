@@ -8,7 +8,7 @@ const HomePage = () => {
 
   return (
      <div className="flex flex-col items-center mt-20">
-      <h1 className="text-4xl font-bold mb-6">Welcome to Online Judge !</h1>
+      <h1 className="text-4xl font-bold mb-6">Welcome to Algorun Judge !</h1>
 
       {!user ? (
         <div className="space-x-4">

@@ -7,11 +7,13 @@ import ProblemDetailsPage from "../pages/ProblemDetailsPage";
 import AddProblemPage from "../pages/AddProblemPage";
 import { useAuth } from "../context/AuthContext";
 import { Navigate } from "react-router-dom";
-
-
+import { AnimatePresence } from "framer-motion";
+import SubmitPage from "../pages/SubmitPage";
 const AppRoutes = () => {
   const { user } = useAuth();
   return (
+    
+    
     <Routes>
       <Route path="/" element={<HomePage />} /> {/* Homepage */}
       <Route path="/login" element={<LoginPage />} /> {/* Login page */}
@@ -21,7 +23,9 @@ const AppRoutes = () => {
       {/* Problems page */}
       <Route path="/problems/:id" element={<ProblemDetailsPage />} />
       <Route path="/add-problem" element={user?.role === 'admin' ? <AddProblemPage /> : <Navigate to="/login" />} />
-    </Routes>
+      <Route path="/submit/:problemId" element={<SubmitPage />} />
+      </Routes>
+    
   );
 };
 

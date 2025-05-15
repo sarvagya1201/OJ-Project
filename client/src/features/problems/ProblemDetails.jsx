@@ -5,6 +5,7 @@ import { BlockMath } from "react-katex";
 import ReactMarkdown from "react-markdown";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
+import { Link } from "react-router-dom";
 
 const ProblemDetails = () => {
   const { id } = useParams();
@@ -35,7 +36,6 @@ const ProblemDetails = () => {
       <p className="text-sm text-gray-500 mb-4">
         Difficulty: {problem.difficulty}
       </p>
-
       <div className="mb-4">
         <h2 className="font-semibold">Description</h2>
         <div className="prose max-w-none">
@@ -49,7 +49,7 @@ const ProblemDetails = () => {
 
       <div className="mb-4">
         <h2 className="font-semibold">Sample Input</h2>
-        <pre className="bg-gray-100 p-2 rounded">
+        <pre className="bg-gray-300 text-black dark:bg-zinc-800 dark:text-white p-2 rounded">
           <ReactMarkdown
             children={problem.sampleInput}
             remarkPlugins={[remarkMath]}
@@ -60,20 +60,23 @@ const ProblemDetails = () => {
 
       <div className="mb-4">
         <h2 className="font-semibold">Sample Output</h2>
-        <pre className="bg-gray-100 p-2 rounded"><ReactMarkdown
+        <pre className="bg-gray-300 text-black dark:bg-zinc-800 dark:text-white p-2 rounded">
+          <ReactMarkdown
             children={problem.sampleOutput}
             remarkPlugins={[remarkMath]}
             rehypePlugins={[rehypeKatex]}
-          /></pre>
+          />
+        </pre>
       </div>
-
       <p className="text-sm text-gray-600 mb-1">
         Tags: {problem.tags.join(", ")}
       </p>
-      <p className="text-sm">
-        Time Limit: {problem.timeLimit} sec | Memory Limit:{" "}
-        {problem.memoryLimit} MB
-      </p>
+
+      <Link to={`/submit/${problem._id}`}>
+        <button className="mt-4 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+          Submit Solution
+        </button>
+      </Link>
     </div>
   );
 };
