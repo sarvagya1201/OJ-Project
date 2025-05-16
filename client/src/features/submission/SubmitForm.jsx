@@ -4,6 +4,8 @@ import { useAuth } from "../../context/AuthContext";
 import { submitCode } from "../../services/submissionService";
 import axiosInstance from "../../services/axiosInstance";
 import { Link } from "react-router-dom";
+import CodeEditor from "../../components/CodeEditor";
+
 const SubmitForm = () => {
   const { problemId } = useParams();
   const { user } = useAuth();
@@ -34,18 +36,21 @@ const SubmitForm = () => {
       setMessage("Please login to submit.");
       return;
     }
-
+    if (!code.trim()) {
+      setMessage("❌ Code cannot be empty.");
+      return;
+    }
     setLoading(true);
     setMessage("");
 
     try {
       const response = await submitCode({ problemId, code, language });
       setMessage(
-        "Submission successful! Submission ID: " + response.submission._id
+        "✅ Submission successful! Submission ID: " + response.submission._id
       );
       setCode(""); // clear code box on success if you want
     } catch (error) {
-      setMessage(error.response?.data?.message || "Submission failed");
+      setMessage(error.response?.data?.message || " Submission failed");
     } finally {
       setLoading(false);
     }
@@ -61,6 +66,9 @@ const SubmitForm = () => {
           {problemTitle}{" "}
         </p>
       </Link>
+
+      {/* terminal is placed below  */}
+
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
           <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-200 mb-1">
@@ -77,7 +85,7 @@ const SubmitForm = () => {
           </select>
         </div>
 
-        <div>
+        {/* <div>
           <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-200 mb-1">
             Code
           </label>
@@ -89,7 +97,14 @@ const SubmitForm = () => {
             required
             className="w-full p-3 font-mono text-sm rounded border border-zinc-300 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-        </div>
+        </div> */}
+
+        <CodeEditor
+          language={language === "cpp" ? "cpp" : language}
+          code={code}
+          onChange={(value) => setCode(value)}
+          className={`mb-4 ${!code.trim() ? "border-red-500" : ""}`}
+        />
 
         <button
           type="submit"
@@ -105,8 +120,8 @@ const SubmitForm = () => {
           <div
             className={`mt-4 p-3 rounded text-sm ${
               message.startsWith("✅")
-                ? "bg-green-100 text-green-800"
-                : "bg-green-900 text-white"
+                ? "bg-green-200 text-black"
+                : "bg-red-200 text-black"
             }`}
           >
             {message}

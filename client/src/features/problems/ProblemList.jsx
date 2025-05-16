@@ -73,10 +73,10 @@ const ProblemList = () => {
               <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600">
                 <th
                   scope="row"
-                  className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                  className="px-6 py-4 transition-shadow font-medium text-gray-900 whitespace-nowrap dark:text-white "
                 >
                   <Link to={`/problems/${problem._id}`}>
-                    {problem.title}
+                    <div className="hover:underline">{problem.title}</div>
                   </Link>
                 </th>
                 <td className="px-6 py-4">{problem.tags.join(", ")}</td>
