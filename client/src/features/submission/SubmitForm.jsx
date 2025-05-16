@@ -3,10 +3,10 @@ import { useParams } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { submitCode } from "../../services/submissionService";
 import axiosInstance from "../../services/axiosInstance";
-
+import { Link } from "react-router-dom";
 const SubmitForm = () => {
-  const { problemId } = useParams();  
-  const { user } = useAuth();         
+  const { problemId } = useParams();
+  const { user } = useAuth();
 
   const [code, setCode] = useState("");
   const [language, setLanguage] = useState("cpp");
@@ -14,7 +14,7 @@ const SubmitForm = () => {
   const [message, setMessage] = useState("");
   const [problemTitle, setProblemTitle] = useState("");
 
-    useEffect(() => {
+  useEffect(() => {
     const fetchProblem = async () => {
       try {
         const res = await axiosInstance.get(`/problems/${problemId}`);
@@ -40,7 +40,9 @@ const SubmitForm = () => {
 
     try {
       const response = await submitCode({ problemId, code, language });
-      setMessage("Submission successful! Submission ID: " + response.submission._id);
+      setMessage(
+        "Submission successful! Submission ID: " + response.submission._id
+      );
       setCode(""); // clear code box on success if you want
     } catch (error) {
       setMessage(error.response?.data?.message || "Submission failed");
@@ -54,9 +56,11 @@ const SubmitForm = () => {
       <h2 className="text-3xl font-bold mb-6 text-center text-zinc-800 dark:text-white">
         Submit Your Solution
       </h2>
-       <p className="text-lg text-center text-blue-600 dark:text-blue-400 font-medium mb-6">
-        {problemTitle}
-      </p>
+      <Link to={`/problems/${problemId}`}>
+        <p className="text-lg text-center text-blue-600 dark:text-blue-400 font-medium mb-6">
+          {problemTitle}{" "}
+        </p>
+      </Link>
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
           <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-200 mb-1">

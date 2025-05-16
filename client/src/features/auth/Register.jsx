@@ -1,33 +1,3 @@
-// import { useState } from 'react';
-// import { register } from '../../services/authService';
-
-// const Register = () => {
-//   const [form, setForm] = useState({ name: '', email: '', password: '' });
-
-//   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
-
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-//     try {
-//       const data = await register(form);
-//       alert('Registered successfully: ' + data.token);
-//     } catch (err) {
-//       alert(err.response?.data?.message || 'Registration failed');
-//     }
-//   };
-
-//   return (
-//     <form onSubmit={handleSubmit}>
-//       <h2>Register</h2>
-//       <input name="name" placeholder="Name" onChange={handleChange} required /><br />
-//       <input name="email" type="email" placeholder="Email" onChange={handleChange} required /><br />
-//       <input name="password" type="password" placeholder="Password" onChange={handleChange} required /><br />
-//       <button type="submit">Register</button>
-//     </form>
-//   );
-// };
-
-// export default Register;
 import { useState } from 'react';
 import { registerUser } from '../../services/authService';
 import { useNavigate } from 'react-router-dom';
