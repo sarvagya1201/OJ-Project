@@ -9,6 +9,9 @@ import { useAuth } from "../context/AuthContext";
 import { Navigate } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import SubmitPage from "../pages/SubmitPage";
+import ManageProblemsPage from "../pages/ManageProblemsPage";
+import EditProblemPage from "../pages/EditProblemPage";
+
 const AppRoutes = () => {
   const { user } = useAuth();
   return (
@@ -22,7 +25,9 @@ const AppRoutes = () => {
       <Route path="/problems" element={<ProblemsPage />} />{" "}
       {/* Problems page */}
       <Route path="/problems/:id" element={<ProblemDetailsPage />} />
-      <Route path="/add-problem" element={user?.role === 'admin' ? <AddProblemPage /> : <Navigate to="/login" />} />
+      <Route path="/add-problem" element={user?.role === 'admin' ? <AddProblemPage /> : <Navigate to="/problems" />} />
+      <Route path="/manage-problems" element={user?.role === 'admin' ? <ManageProblemsPage /> : <Navigate to="/problems" />} />
+      <Route path="/edit-problem/:id" element={user?.role === 'admin' ? <EditProblemPage /> : <Navigate to="/problems" />} />
       <Route path="/submit/:problemId" element={<SubmitPage />} />
       </Routes>
     

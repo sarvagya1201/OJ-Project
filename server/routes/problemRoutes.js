@@ -3,6 +3,8 @@ import {
   addProblem,
   getAllProblems,
   getProblemById,
+  updateProblem,
+  deleteProblem,
 } from "../controllers/problemController.js";
 import { upload } from "../middleware/upload.js";
 import { protect, isAdmin } from "../middleware/authMiddleware.js";
@@ -24,5 +26,13 @@ router.post(
   ]),
   addProblem
 );
+router.put(
+  "/:id",
+  protect,
+  isAdmin,
+  upload.fields([{ name: "testInput" }, { name: "testOutput" }]),
+  updateProblem
+);
+router.delete("/:id", protect, isAdmin, deleteProblem);
 
 export default router;

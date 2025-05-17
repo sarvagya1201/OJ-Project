@@ -26,28 +26,6 @@ const ProblemList = () => {
 
   return (
     <>
-      {/* <div className="p-4 max-w-4xl mx-auto">
-      <h2 className="text-2xl font-bold text-center mb-6">Browse all Problems</h2>
-
-      <div className="space-y-4">
-        {problems.map((problem) => (
-          <div
-            key={problem._id}
-            className="flex justify-between items-start border p-4 rounded shadow hover:shadow-md transition-shadow"
-          >
-            <div>
-              <Link to={`/problems/${problem._id}`}>
-                <h3 className="text-lg font-semibold text-white-600 hover:underline">
-                  {problem.title}
-                </h3>
-              </Link>
-              <p className="text-sm text-gray-500">Tags: {problem.tags.join(", ")}</p>
-            </div>
-            <p className="text-sm font-medium text-gray-500">{problem.difficulty}</p>
-          </div>
-        ))}
-      </div>
-    </div> */}
 
       <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
         <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">

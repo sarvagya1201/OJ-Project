@@ -19,3 +19,18 @@ export const addProblem = async (formData) => {
   });
   return res.data;
 };
+
+export const updateProblemById = async (id, formData) => {
+  const res = await axiosInstance.put(`/problems/${id}`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+  return res.data;
+};
+
+
+export const deleteProblemById = async (id) => {
+  const res = await axiosInstance.delete(`/problems/${id}`);
+  return res.data;
+};
