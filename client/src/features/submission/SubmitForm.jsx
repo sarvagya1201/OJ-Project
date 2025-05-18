@@ -45,12 +45,26 @@ const SubmitForm = () => {
 
     try {
       const response = await submitCode({ problemId, code, language });
-      setMessage(
-        "✅ Submission successful! Submission ID: " + response.submission._id
-      );
-      setCode(""); // clear code box on success if you want
+      const { status, output, error, _id } = response.submission;
+      // let verdictMessage = `📄 Verdict: ${status}`;
+      let verdictMessage = ``;
+      if (status === "Accepted") {
+        verdictMessage += `✅ Verdict: ${status}`;
+      } else if (error) {
+        verdictMessage += `❌ Error: ${error}`;
+      } else if (output) {
+        verdictMessage += `🔍 Verdict: ${status}`;
+      }
+
+      verdictMessage += `\n🆔 Submission ID: ${_id}`;
+      setMessage(verdictMessage);
+      setCode(""); // Optional: clear editor after submission
+      // setMessage(
+      //   "✅ Submission successful! Submission ID: " + response.submission._id
+      // );
+      // setCode(""); // clear code box on success if you want
     } catch (error) {
-      setMessage(error.response?.data?.message || " Submission failed");
+      setMessage(error.response?.data?.message || "❌ Submission failed");
     } finally {
       setLoading(false);
     }
@@ -85,20 +99,6 @@ const SubmitForm = () => {
           </select>
         </div>
 
-        {/* <div>
-          <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-200 mb-1">
-            Code
-          </label>
-          <textarea
-            rows={12}
-            value={code}
-            onChange={(e) => setCode(e.target.value)}
-            placeholder="// Write your code here..."
-            required
-            className="w-full p-3 font-mono text-sm rounded border border-zinc-300 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div> */}
-
         <CodeEditor
           language={language === "cpp" ? "cpp" : language}
           code={code}
@@ -118,7 +118,7 @@ const SubmitForm = () => {
 
         {message && (
           <div
-            className={`mt-4 p-3 rounded text-sm ${
+            className={`mt-4 p-3 rounded text-sm whitespace-pre-wrap ${
               message.startsWith("✅")
                 ? "bg-green-200 text-black"
                 : "bg-red-200 text-black"
