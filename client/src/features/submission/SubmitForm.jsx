@@ -5,6 +5,7 @@ import { submitCode } from "../../services/submissionService";
 import axiosInstance from "../../services/axiosInstance";
 import { Link } from "react-router-dom";
 import CodeEditor from "../../components/CodeEditor";
+import { useNavigate } from "react-router-dom";
 
 const SubmitForm = () => {
   const { problemId } = useParams();
@@ -15,6 +16,7 @@ const SubmitForm = () => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [problemTitle, setProblemTitle] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProblem = async () => {
@@ -46,23 +48,19 @@ const SubmitForm = () => {
     try {
       const response = await submitCode({ problemId, code, language });
       const { status, output, error, _id } = response.submission;
-      // let verdictMessage = `📄 Verdict: ${status}`;
-      let verdictMessage = ``;
-      if (status === "Accepted") {
-        verdictMessage += `✅ Verdict: ${status}`;
-      } else if (error) {
-        verdictMessage += `❌ Error: ${error}`;
-      } else if (output) {
-        verdictMessage += `🔍 Verdict: ${status}`;
-      }
 
-      verdictMessage += `\n🆔 Submission ID: ${_id}`;
-      setMessage(verdictMessage);
-      setCode(""); // Optional: clear editor after submission
-      // setMessage(
-      //   "✅ Submission successful! Submission ID: " + response.submission._id
-      // );
-      // setCode(""); // clear code box on success if you want
+      // Optional: log the verdict if needed
+      console.log(
+        "Verdict:",
+        status,
+        "| Error:",
+        error,
+        "| Output:",
+        output,
+        "| Submission ID:",
+        _id
+      );
+      navigate("/submissions", { state: { highlightedId: _id } });
     } catch (error) {
       setMessage(error.response?.data?.message || "❌ Submission failed");
     } finally {
@@ -80,8 +78,6 @@ const SubmitForm = () => {
           {problemTitle}{" "}
         </p>
       </Link>
-
-      {/* terminal is placed below  */}
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
@@ -118,11 +114,7 @@ const SubmitForm = () => {
 
         {message && (
           <div
-            className={`mt-4 p-3 rounded text-sm whitespace-pre-wrap ${
-              message.startsWith("✅")
-                ? "bg-green-200 text-black"
-                : "bg-red-200 text-black"
-            }`}
+            className={`"px-4 py-2 sm:rounded-lg bg-white border-b dark:bg-gray-800 dark:border-gray-700  text-red-600 `}
           >
             {message}
           </div>

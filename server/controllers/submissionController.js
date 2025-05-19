@@ -51,3 +51,34 @@ export const createSubmission = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+export const mySubmissions = async (req, res) => {
+  try {
+    const submissions = await Submission.find({ user: req.user.id })
+      .populate("problem", "title") // Get problem title
+      .sort({ submittedAt: -1 });
+
+    res.json({ submissions });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server Error" });
+  }
+};
+
+
+export const getSubmissionById = 
+async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const sub = await Submission.findById(id);
+    if (!sub) return res.status(404).json({ message: 'Submission not found' });
+
+    res.status(200).json(sub);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+

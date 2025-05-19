@@ -33,12 +33,20 @@ const HomePage = () => {
           </div>
         </div>
       ) : (
-        <Link
-          to="/problems"
-          className="bg-purple-500 text-white px-4 py-2 rounded"
-        >
-          Browse Problemset
-        </Link>
+        <div className="space-x-4 justify-content-center" >
+          <Link
+            to="/problems"
+            className="bg-purple-500 text-white px-4 py-2 rounded"
+          >
+            Browse Problemset
+          </Link>
+          <Link
+            to="/submissions"
+            className="bg-blue-800 text-white px-4 py-2 rounded"
+          >
+            My Submissions
+          </Link>
+        </div>
       )}
     </div>
   );

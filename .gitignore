@@ -27,6 +27,6 @@ Thumbs.db
 
 
 #testcases
-server/uploads/testcases/
+server/uploads
 server/code_files
 server/executables

@@ -11,6 +11,7 @@ import { AnimatePresence } from "framer-motion";
 import SubmitPage from "../pages/SubmitPage";
 import ManageProblemsPage from "../pages/ManageProblemsPage";
 import EditProblemPage from "../pages/EditProblemPage";
+import MySubmissionsPage from "../pages/MySubmissionsPage";
 
 const AppRoutes = () => {
   const { user } = useAuth();
@@ -29,6 +30,8 @@ const AppRoutes = () => {
       <Route path="/manage-problems" element={user?.role === 'admin' ? <ManageProblemsPage /> : <Navigate to="/problems" />} />
       <Route path="/edit-problem/:id" element={user?.role === 'admin' ? <EditProblemPage /> : <Navigate to="/problems" />} />
       <Route path="/submit/:problemId" element={<SubmitPage />} />
+      <Route path="/submissions" element={<MySubmissionsPage />} />
+
       </Routes>
     
   );
