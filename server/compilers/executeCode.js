@@ -54,7 +54,7 @@ export const executeCode = (
     const handleExecution = () => {
       const input = fs.readFileSync(inputFilePath, "utf-8");
       const expected = fs.readFileSync(expectedOutputFilePath, "utf-8").trim();
-
+      let timedOut = false;
       let runProcess;
       switch (language) {
         case "cpp":
@@ -79,9 +79,27 @@ export const executeCode = (
         stderr += data.toString();
       });
 
+      // Timeout enforcement (e.g., 2000 ms = 2 seconds)
+      const timeout = setTimeout(() => {
+        timedOut = true;
+        runProcess.kill("SIGKILL");
+      }, 2000); // 2 seconds
+
       runProcess.on("close", (code) => {
+        clearTimeout(timeout);
+        if (timedOut) {
+          return resolve({
+            success: false,
+            error: "Time Limit Exceeded",
+            verdict: "Time Limit Exceeded",
+          });
+        }
         if (code !== 0 || stderr) {
-          return resolve({ success: false, error: stderr || "Runtime Error" });
+          return resolve({
+            success: false,
+            error: stderr || "Runtime Error",
+            verdict: "Runtime Error",
+          });
         }
 
         const actual = stdout.trim();
@@ -92,19 +110,12 @@ export const executeCode = (
     if (compile) {
       compile.on("close", (code) => {
         if (code !== 0) {
-          return resolve({ success: false, error: "Compilation Error" });
+          return resolve({ success: false, error: "Compilation Error",  verdict: "Compilation Error" });
         }
         handleExecution();
       });
     } else {
       handleExecution();
     }
-
-    // exec(command, { timeout: 5000 }, (err, stdout, stderr) => {
-    //   if (err) {
-    //     return resolve({ success: false, error: stderr || err.message });
-    //   }
-    //   return resolve({ success: true, output: stdout });
-    // });
   });
 };

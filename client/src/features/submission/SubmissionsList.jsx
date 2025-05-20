@@ -81,7 +81,7 @@ const Submissions = () => {
                 key={s._id}
                 className={`relative overflow-visible ${
                   s._id === highlightedId
-                    ? "bg-yellow-200 dark:bg-yellow-800"
+                    ? "bg-blue-200 dark:bg-cyan-800"
                     : "bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600"
                 }`}
               >
