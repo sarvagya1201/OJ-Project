@@ -70,9 +70,9 @@ const Submissions = () => {
               <th scope="col" className="px-4 py-2">
                 Code
               </th>
-              {/* <th scope="col" className="px-4 py-2">
-                Run Time
-              </th> */}
+              <th scope="col" className="px-4 py-2">
+                Run Time (ms)
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -134,7 +134,7 @@ const Submissions = () => {
                     View Code
                   </button>
                 </td>
-                {/* <td className="px-4 py-2 capitalize">{s.runtime}</td> */}
+                <td className="px-4 py-2 capitalize">{s.time}</td>
               </tr>
             ))}
           </tbody>

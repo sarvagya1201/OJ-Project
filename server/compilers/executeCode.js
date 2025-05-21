@@ -1,16 +1,17 @@
 import fs from "fs";
 import path from "path";
-import { exec } from "child_process";
+import { exec, spawn } from "child_process";
 import { v4 as uuidv4 } from "uuid";
 import { fileURLToPath } from "url";
-import { spawn } from "child_process";
 import os from "os";
+import { performance } from "perf_hooks";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const CODE_FOLDER = path.join(__dirname, "../code_files");
 const EXEC_FOLDER = path.join(__dirname, "../executables");
+
 if (!fs.existsSync(CODE_FOLDER)) fs.mkdirSync(CODE_FOLDER);
 if (!fs.existsSync(EXEC_FOLDER)) fs.mkdirSync(EXEC_FOLDER);
 
@@ -23,7 +24,7 @@ export const executeCode = (
   const jobId = `${uuidv4()}-${Date.now()}`;
   const extensions = {
     cpp: "cpp",
-    java: "java",
+    java: "java", // later
     python: "py",
   };
 
@@ -40,7 +41,6 @@ export const executeCode = (
 
   return new Promise((resolve) => {
     let compile;
-    let run;
 
     // Compile
     switch (language) {
@@ -54,7 +54,7 @@ export const executeCode = (
     const handleExecution = () => {
       const input = fs.readFileSync(inputFilePath, "utf-8");
       const expected = fs.readFileSync(expectedOutputFilePath, "utf-8").trim();
-      let timedOut = false;
+
       let runProcess;
       switch (language) {
         case "cpp":
@@ -67,9 +67,20 @@ export const executeCode = (
 
       let stdout = "";
       let stderr = "";
+      let timedOut = false;
+
+      const startTime = performance.now();
+      runProcess.stdin.on("error", (err) => {
+        // Suppress broken pipe errors when the process is killed
+        if (err.code !== "EPIPE") {
+          console.error("Stdin error:", err);
+        }
+      });
 
       runProcess.stdin.write(input);
       runProcess.stdin.end();
+      // runProcess.stdin.write(input);
+      // runProcess.stdin.end();
 
       runProcess.stdout.on("data", (data) => {
         stdout += data.toString();
@@ -87,11 +98,16 @@ export const executeCode = (
 
       runProcess.on("close", (code) => {
         clearTimeout(timeout);
+
+        const endTime = performance.now();
+        const executionTime = parseFloat((endTime - startTime).toFixed(2)); // ms
+
         if (timedOut) {
           return resolve({
             success: false,
             error: "Time Limit Exceeded",
             verdict: "Time Limit Exceeded",
+            time: 2000,
           });
         }
         if (code !== 0 || stderr) {
@@ -99,18 +115,30 @@ export const executeCode = (
             success: false,
             error: stderr || "Runtime Error",
             verdict: "Runtime Error",
+            time: executionTime,
           });
         }
 
         const actual = stdout.trim();
         const verdict = actual === expected ? "Accepted" : "Wrong Answer";
-        resolve({ success: true, output: actual, verdict, expected });
+        resolve({
+          success: true,
+          output: actual,
+          verdict,
+          expected,
+          time: executionTime,
+        });
       });
     };
     if (compile) {
       compile.on("close", (code) => {
         if (code !== 0) {
-          return resolve({ success: false, error: "Compilation Error",  verdict: "Compilation Error" });
+          return resolve({
+            success: false,
+            error: "Compilation Error",
+            verdict: "Compilation Error",
+            time: 0,
+          });
         }
         handleExecution();
       });

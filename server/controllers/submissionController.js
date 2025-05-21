@@ -40,6 +40,7 @@ export const createSubmission = async (req, res) => {
       status: result.verdict || "error",
       output: result.output || null,
       error: result.error || null,
+      time: result.time || null,
     });
 
     await submission.save();
