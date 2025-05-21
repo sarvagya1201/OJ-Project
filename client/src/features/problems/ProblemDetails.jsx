@@ -6,12 +6,13 @@ import ReactMarkdown from "react-markdown";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import { Link } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
 const ProblemDetails = () => {
   const { id } = useParams();
   const [problem, setProblem] = useState(null);
   const [loading, setLoading] = useState(true);
-
+  const { user } = useAuth();
   useEffect(() => {
     const fetchProblem = async () => {
       try {
@@ -71,12 +72,20 @@ const ProblemDetails = () => {
       <p className="text-sm text-gray-600 mb-1">
         Tags: {problem.tags.join(", ")}
       </p>
-
-      <Link to={`/submit/${problem._id}`}>
-        <button className="mt-4 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
-          Submit Solution
-        </button>
-      </Link>
+      <div className="flex gap-4 mt-4">
+        <Link to={`/submit/${problem._id}`}>
+          <button className="mt-4 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+            Submit Solution
+          </button>
+        </Link>
+        {user && (
+          <Link to={`/problems/${problem._id}/submissions`}>
+            <button className="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded">
+              All Submissions
+            </button>
+          </Link>
+        )}
+      </div>
     </div>
   );
 };

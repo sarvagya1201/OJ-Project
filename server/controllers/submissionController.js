@@ -88,20 +88,20 @@ export const getSubmissionsByProblem = async (req, res) => {
     const problemId = req.params.problemId;
     const userId = req.user._id;
 
-    // submissions by logged-in user
     const userSubmissions = await Submission.find({
       problem: problemId,
       user: userId,
-    }).sort({ createdAt: -1 });
+    })
+      .sort({ createdAt: -1 })
+      .populate("user", "name");
 
-    // all other users' submissions (excluding code)
     const otherSubmissions = await Submission.find({
       problem: problemId,
       user: { $ne: userId },
     })
       .sort({ createdAt: -1 })
-      .populate("user", "name") // populate user name only
-      .select("-code"); // exclude code
+      .populate("user", "name")
+      .select("-code");
 
     res.status(200).json({
       userSubmissions,
