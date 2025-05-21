@@ -83,3 +83,32 @@ async (req, res) => {
 };
 
 
+export const getSubmissionsByProblem = async (req, res) => {
+  try {
+    const problemId = req.params.problemId;
+    const userId = req.user._id;
+
+    // submissions by logged-in user
+    const userSubmissions = await Submission.find({
+      problem: problemId,
+      user: userId,
+    }).sort({ createdAt: -1 });
+
+    // all other users' submissions (excluding code)
+    const otherSubmissions = await Submission.find({
+      problem: problemId,
+      user: { $ne: userId },
+    })
+      .sort({ createdAt: -1 })
+      .populate("user", "name") // populate user name only
+      .select("-code"); // exclude code
+
+    res.status(200).json({
+      userSubmissions,
+      otherSubmissions,
+    });
+  } catch (error) {
+    console.error("Error fetching submissions:", error);
+    res.status(500).json({ message: "Server Error" });
+  }
+};
