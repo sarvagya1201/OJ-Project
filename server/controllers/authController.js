@@ -91,11 +91,37 @@ export const logoutUser = (req, res) => {
 };
 
 export const meUser = async (req, res) => {
- try {
+  try {
     // `req.user` is already populated by the `protect` middleware
     res.json({ user: req.user }); // no need to query again
   } catch (err) {
     console.error("Error fetching user:", err);
     res.status(500).json({ message: "Failed to fetch user" });
+  }
+};
+
+export const changePassword = async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+
+  try {
+    // Verify current password
+    const user = await User.findById(req.user.id);
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+
+    if (!isMatch) {
+      return res.status(400).json({ msg: "Invalid current password" });
+    }
+
+    // Hash the new password
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(newPassword, salt);
+
+    // Save the updated user with new password
+    await user.save();
+
+    res.json({ msg: "Password updated successfully" });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
   }
 };
