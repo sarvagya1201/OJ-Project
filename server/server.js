@@ -6,6 +6,7 @@ import connectDB from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
 import problemRoutes from './routes/problemRoutes.js';
 import submissionRoutes from './routes/submissionRoutes.js';
+import userRoutes from './routes/userRoutes.js';
 
 dotenv.config();
 const app = express();
@@ -24,6 +25,7 @@ app.use(cookieParser());
 app.use("/api/auth", authRoutes);
 app.use('/api/problems', problemRoutes);
 app.use('/api/submissions', submissionRoutes);
+app.use('/api/user', userRoutes);
 
 // Connect to MongoDB
 connectDB();
