@@ -13,6 +13,8 @@ import ManageProblemsPage from "../pages/ManageProblemsPage";
 import EditProblemPage from "../pages/EditProblemPage";
 import MySubmissionsPage from "../pages/MySubmissionsPage";
 import ProblemAllSubmissionsPage from "../pages/ProblemAllSubmissionPage";
+import UserDashboardPage from "../pages/UserDashboardPage";
+
 
 const AppRoutes = () => {
   const { user } = useAuth();
@@ -33,6 +35,7 @@ const AppRoutes = () => {
       <Route path="/edit-problem/:id" element={user?.role === 'admin' ? <EditProblemPage /> : <Navigate to="/problems" />} />
       <Route path="/submit/:problemId" element={<SubmitPage />} />
       <Route path="/submissions" element={<MySubmissionsPage />} />
+      <Route path="/user/dashboard" element={<UserDashboardPage />} />
 
       </Routes>
     

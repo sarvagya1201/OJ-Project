@@ -1,0 +1,137 @@
+import React, { useEffect, useState } from "react";
+import axiosInstance from "../../services/axiosInstance";
+import moment from "moment";
+import HeatMap from "@uiw/react-heat-map";
+import { Link } from "react-router-dom";
+import { Tooltip } from "react-tooltip";
+import "react-tooltip/dist/react-tooltip.css";
+
+const UserDashboard = () => {
+  const [userData, setUserData] = useState(null);
+
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        const response = await axiosInstance.get("/user/dashboard");
+        setUserData(response.data);
+      } catch (error) {
+        console.error("Failed to fetch dashboard data", error);
+      }
+    };
+
+    fetchDashboardData();
+  }, []);
+
+  if (!userData) return <p className="text-center mt-10">Loading...</p>;
+
+  const heatmapValues = Object.entries(userData.heatmap).map(
+    ([date, count]) => ({
+      date,
+      count,
+    })
+  );
+  const sixMonthsAgo = moment().subtract(6, "months").format("YYYY-MM-DD");
+  const today = moment().format("YYYY-MM-DD");
+
+  return (
+    <div className="max-w-6xl mx-auto p-4 dark:bg-gray-900 dark:text-gray-200 min-h-screen">
+      <h1 className="text-3xl font-bold mb-4">User Dashboard</h1>
+
+      {/* User Info */}
+      <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-4 mb-6">
+        <p className="text-lg font-medium">👤 {userData.name}</p>
+        <p className="text-sm text-gray-600 dark:text-gray-300">
+          📧 {userData.email}
+        </p>
+
+        <Link
+          to="/change-password"
+          className="inline-block mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+        >
+          Change Password
+        </Link>
+        <Link
+          to="/submissions"
+          className="ml-4 text-blue-500 hover:underline dark:text-blue-400"
+        >
+          View My Submissions
+        </Link>
+      </div>
+
+      {/* Heatmap */}
+      <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-4 mb-6 w-full overflow-x-auto">
+        <h2 className="text-xl font-semibold mb-4">
+          🔥 Activity Heatmap (Last 6 Months)
+        </h2>
+        <div className="min-w-[1000px]">
+          {" "}
+          {/* Ensures wide layout */}
+          <HeatMap
+            value={heatmapValues}
+            startDate={sixMonthsAgo}
+            width = {1000}
+            endDate={today}
+            rectSize={14}
+            space={3}
+            panelColors={{
+              0: "#ebedf0",
+              1: "#c6e48b",
+              3: "#7bc96f",
+              5: "#239a3b",
+              10: "#196127",
+            }}
+            rectRender={(props, data) => {
+              return (
+                <rect
+                  {...props}
+                  data-tooltip-id="heatmap-tooltip"
+                  data-tooltip-content={
+                    data.date
+                      ? `${data.date}: ${data.count || 0} submissions`
+                      : "No data"
+                  }
+                  className="cursor-pointer"
+                />
+              );
+            }}
+          />
+        </div>
+        <Tooltip id="heatmap-tooltip" />
+      </div>
+
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+        <div className="bg-green-100 dark:bg-green-900 p-4 rounded-lg shadow">
+          <p className="text-2xl font-bold">{userData.problemsSolvedAllTime}</p>
+          <p className="text-sm">All-Time Solved</p>
+        </div>
+        <div className="bg-green-100 dark:bg-green-900 p-4 rounded-lg shadow">
+          <p className="text-2xl font-bold">
+            {userData.problemsSolvedLastYear}
+          </p>
+          <p className="text-sm">Solved This Year</p>
+        </div>
+        <div className="bg-green-100 dark:bg-green-900 p-4 rounded-lg shadow">
+          <p className="text-2xl font-bold">
+            {userData.problemsSolvedLastMonth}
+          </p>
+          <p className="text-sm">Solved This Month</p>
+        </div>
+        <div className="bg-blue-100 dark:bg-blue-900 p-4 rounded-lg shadow">
+          <p className="text-2xl font-bold">{userData.maxStreakAllTime}</p>
+          <p className="text-sm">Max Streak (All Time)</p>
+        </div>
+        <div className="bg-blue-100 dark:bg-blue-900 p-4 rounded-lg shadow">
+          <p className="text-2xl font-bold">{userData.maxStreakLastYear}</p>
+          <p className="text-sm">Streak This Year</p>
+        </div>
+        <div className="bg-blue-100 dark:bg-blue-900 p-4 rounded-lg shadow">
+          <p className="text-2xl font-bold">{userData.maxStreakLastMonth}</p>
+          <p className="text-sm">Streak This Month</p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default UserDashboard;
