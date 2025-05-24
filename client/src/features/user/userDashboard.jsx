@@ -8,6 +8,26 @@ import "react-tooltip/dist/react-tooltip.css";
 
 const UserDashboard = () => {
   const [userData, setUserData] = useState(null);
+  const [changePasswordVisible, setChangePasswordVisible] = useState(false);
+  const [form, setForm] = useState({ currentPassword: "", newPassword: "" });
+  const [status, setStatus] = useState({ message: "", type: "" });
+
+  const handleChangePassword = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await axiosInstance.post("/auth/change-password", form);
+      setStatus({
+        message: res.data.message || "Password changed successfully!",
+        type: "success",
+      });
+      setForm({ currentPassword: "", newPassword: "" });
+    } catch (err) {
+      setStatus({
+        message: err.response?.data?.message || "Failed to change password.",
+        type: "error",
+      });
+    }
+  };
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -21,15 +41,19 @@ const UserDashboard = () => {
 
     fetchDashboardData();
   }, []);
-
+  const heatmapValues = userData
+    ? Object.entries(userData.heatmap).map(([date, count]) => ({
+        date,
+        count,
+      }))
+    : []; // Provide a default empty array or handle the null case appropriately
+  useEffect(() => {
+    import("react-tooltip").then(({ Tooltip }) => {
+      Tooltip.rebuild?.();
+    });
+  }, [heatmapValues]);
   if (!userData) return <p className="text-center mt-10">Loading...</p>;
 
-  const heatmapValues = Object.entries(userData.heatmap).map(
-    ([date, count]) => ({
-      date,
-      count,
-    })
-  );
   const sixMonthsAgo = moment().subtract(6, "months").format("YYYY-MM-DD");
   const today = moment().format("YYYY-MM-DD");
 
@@ -44,12 +68,54 @@ const UserDashboard = () => {
           📧 {userData.email}
         </p>
 
-        <Link
-          to="/change-password"
+        <button
           className="inline-block mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          onClick={() => setChangePasswordVisible(!changePasswordVisible)}
         >
-          Change Password
-        </Link>
+          {changePasswordVisible ? "Cancel" : "Change Password"}
+        </button>
+        {changePasswordVisible && (
+          <form
+            onSubmit={handleChangePassword}
+            className="mt-4 space-y-3 max-w-sm"
+          >
+            <input
+              type="password"
+              placeholder="Current Password"
+              className="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:text-white"
+              value={form.currentPassword}
+              onChange={(e) =>
+                setForm({ ...form, currentPassword: e.target.value })
+              }
+              required
+            />
+            <input
+              type="password"
+              placeholder="New Password"
+              className="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:text-white"
+              value={form.newPassword}
+              onChange={(e) =>
+                setForm({ ...form, newPassword: e.target.value })
+              }
+              required
+            />
+            <button
+              type="submit"
+              className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+            >
+              Submit
+            </button>
+            {status.message && (
+              <p
+                className={`text-sm mt-2 ${
+                  status.type === "success" ? "text-green-600" : "text-red-600"
+                }`}
+              >
+                {status.message}
+              </p>
+            )}
+          </form>
+        )}
         <Link
           to="/submissions"
           className="ml-4 text-blue-500 hover:underline dark:text-blue-400"
@@ -69,7 +135,7 @@ const UserDashboard = () => {
           <HeatMap
             value={heatmapValues}
             startDate={sixMonthsAgo}
-            width = {1000}
+            width={1000}
             endDate={today}
             rectSize={14}
             space={3}
