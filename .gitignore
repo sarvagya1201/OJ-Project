@@ -1,15 +1,19 @@
 # Node modules for both frontend and backend
 client/node_modules/
 server/node_modules/
+compiler-server/node_modules/
 
 # Build files
 client/dist/
 server/build/
 server/dist/
+compiler-server/build/
+compiler-server/dist/
 
 # Environment variables
 client/.env
 server/.env
+compiler-server/.env
 
 # Logs
 *.log
@@ -28,5 +32,5 @@ Thumbs.db
 
 #testcases
 server/uploads
-server/code_files
-server/executables
+compiler-server/code_files
+compiler-server/executables
