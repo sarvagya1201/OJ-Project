@@ -1,8 +1,9 @@
-import Submission from "../models/Submission.js";
-import mongoose from "mongoose";
-import { executeCode } from "../compilers/executeCode.js";
-import Problem from "../models/Problem.js";
 import path from "path";
+import fs from "fs";
+import mongoose from "mongoose";
+import Submission from "../models/Submission.js";
+import Problem from "../models/Problem.js";
+import { compileViaApi } from "./compileviaAPIController.js";
 
 export const createSubmission = async (req, res) => {
   try {
@@ -13,31 +14,31 @@ export const createSubmission = async (req, res) => {
     const problem = await Problem.findById(problemId);
     if (!problem) return res.status(404).json({ message: "Problem not found" });
 
-    // const submission = new Submission({
-    //   user: req.user.id,
-    //   problem: new mongoose.Types.ObjectId(problemId),
-    //   code,
-    //   language,
-    //   status: result.success ? "success" : "error",
-    //   output: result.output || null,
-    //   error: result.error || null,
-    // });
-    // await submission.save();
-
-    const result = await executeCode(
-      language,
-      code,
+    const input = fs.readFileSync(
       path.join(process.cwd(), problem.testInputFile),
-      path.join(process.cwd(), problem.testOutputFile)
+      "utf-8"
     );
-    // const result = await executeCode(language, code);
+    const expectedOutput = fs
+      .readFileSync(path.join(process.cwd(), problem.testOutputFile), "utf-8")
+      .trim();
 
+    const result = await compileViaApi(language, code, input);
+
+    let verdict = result.verdict || "error";
+    if (result.success) {
+      const actualOutput = result.output.trim();
+      if (actualOutput === expectedOutput) {
+        verdict = "Accepted";
+      } else {
+        verdict = "Wrong Answer";
+      }
+    }
     const submission = new Submission({
       user: req.user.id,
       problem: problem._id,
       code,
       language,
-      status: result.verdict || "error",
+      status: verdict,
       output: result.output || null,
       error: result.error || null,
       time: result.time || null,
@@ -66,22 +67,19 @@ export const mySubmissions = async (req, res) => {
   }
 };
 
-
-export const getSubmissionById = 
-async (req, res) => {
+export const getSubmissionById = async (req, res) => {
   const { id } = req.params;
 
   try {
     const sub = await Submission.findById(id);
-    if (!sub) return res.status(404).json({ message: 'Submission not found' });
+    if (!sub) return res.status(404).json({ message: "Submission not found" });
 
     res.status(200).json(sub);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: "Server error" });
   }
 };
-
 
 export const getSubmissionsByProblem = async (req, res) => {
   try {

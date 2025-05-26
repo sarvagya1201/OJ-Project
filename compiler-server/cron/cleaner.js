@@ -9,6 +9,6 @@ cron.schedule("*/15 * * * *", () => {
   const codeFilesPath = path.join(process.cwd(), "code_files");
   const executablesPath = path.join(process.cwd(), "executables");
 
-  deleteOldFiles(codeFilesPath, 5);      // delete files older than 15 min
-  deleteOldFiles(executablesPath, 5);    // delete files older than 15 min
+  deleteOldFiles(codeFilesPath, 15);      // delete files older than 15 min
+  deleteOldFiles(executablesPath, 15);    // delete files older than 1 min
 });

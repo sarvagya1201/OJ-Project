@@ -7,7 +7,7 @@ import authRoutes from "./routes/authRoutes.js";
 import problemRoutes from "./routes/problemRoutes.js";
 import submissionRoutes from "./routes/submissionRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
-import "./compilers/croncleaner.js";
+
 
 dotenv.config();
 const app = express();
