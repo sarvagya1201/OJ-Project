@@ -78,6 +78,14 @@ const ProblemDetails = () => {
             Submit Solution
           </button>
         </Link>
+        <Link to={`/submit-ai/${problem._id}`}>
+          <button className="relative mt-4 px-6 py-3 bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 text-white rounded-xl shadow-lg hover:scale-105 transform transition duration-300 ease-in-out">
+            <span className="absolute top-0 right-0 -mt-2 -mr-2 bg-yellow-300 text-black text-xs font-bold px-2 py-1 rounded-full shadow">
+              ✨ NEW ✨
+            </span>
+            Submit with AI Review 🚀
+          </button>
+        </Link>
         {user && (
           <Link to={`/problems/${problem._id}/submissions`}>
             <button className="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded">
