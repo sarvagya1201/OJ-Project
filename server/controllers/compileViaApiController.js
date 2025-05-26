@@ -2,7 +2,7 @@ import axios from "axios";
 
 export const compileViaApi = async (language, code, input) => {
   try {
-    const response = await axios.post("http://localhost:5001/api/run", {
+    const response = await axios.post(process.env.COMPILER_API_URL, {
       language,
       code,
       input,

@@ -1,7 +1,9 @@
 import express from "express";
+import dotenv from "dotenv";
 import runRoute from "./routes/runRoute.js";
 import "./cron/cleaner.js";
 
+dotenv.config();
 const app = express();
 
 
