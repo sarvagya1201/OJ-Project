@@ -1,13 +1,14 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
+import { JWT_SECRET } from "../config/config.js";
 // import validateEmail from '../middlewares/validateEmail.js';
 
 const createTokenAndSetCookie = (user, res) => {
   const token = jwt.sign(
     { id: user._id, email: user.email, role: user.role },
     // { id: user._id, email: user.email },
-    process.env.JWT_SECRET,
+    JWT_SECRET,
     { expiresIn: "1d" }
   );
 

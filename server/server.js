@@ -7,6 +7,7 @@ import authRoutes from "./routes/authRoutes.js";
 import problemRoutes from "./routes/problemRoutes.js";
 import submissionRoutes from "./routes/submissionRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
+import geminiRoutes from "./routes/geminiRoutes.js";
 
 
 dotenv.config();
@@ -27,6 +28,8 @@ app.use("/api/auth", authRoutes);
 app.use("/api/problems", problemRoutes);
 app.use("/api/submissions", submissionRoutes);
 app.use("/api/user", userRoutes);
+app.use("/api/gemini", geminiRoutes);
+
 
 // Connect to MongoDB
 connectDB();
