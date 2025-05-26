@@ -16,6 +16,15 @@ export default function executeCpp(sourceFile, execFile, input) {
         });
       }
 
+      if (!fs.existsSync(execFile)) {
+        return resolve({
+          success: false,
+          error: "Executable not found after compilation",
+          verdict: "Internal Error",
+          time: 0,
+        });
+      }
+
       const runProcess = spawn(execFile);
       let stdout = "";
       let stderr = "";
@@ -27,8 +36,31 @@ export default function executeCpp(sourceFile, execFile, input) {
         runProcess.kill("SIGKILL");
       }, 2000); // 2 seconds
 
-      runProcess.stdin.write(input);
-      runProcess.stdin.end();
+      runProcess.stdin.on("error", (err) => {
+        clearTimeout(timeout);
+        const endTime = performance.now();
+        return resolve({
+          success: false,
+          error: "Wrong Answer", // stdin crash due to unexpected input
+          verdict: "Wrong Answer",
+          time: parseFloat((endTime - startTime).toFixed(2)),
+        });
+      });
+
+      setImmediate(() => {
+        try {
+          runProcess.stdin.write(input);
+          runProcess.stdin.end();
+        } catch (err) {
+          clearTimeout(timeout);
+          return resolve({
+            success: false,
+            error: "Wrong Answer", // stdin write failed
+            verdict: "Wrong Answer",
+            time: 0,
+          });
+        }
+      });
 
       runProcess.stdout.on("data", (data) => {
         stdout += data.toString();
@@ -51,11 +83,13 @@ export default function executeCpp(sourceFile, execFile, input) {
             time: 2000,
           });
         }
-        if (code !== 0 || stderr) {
+
+        // Handle segmentation faults or bad input crashes
+        if (code !== 0 || stderr.includes("Segmentation fault") || stderr) {
           return resolve({
             success: false,
-            error: stderr || "Runtime Error",
-            verdict: "Runtime Error",
+            error: "Wrong Answer",
+            verdict: "Wrong Answer",
             time: executionTime,
           });
         }
