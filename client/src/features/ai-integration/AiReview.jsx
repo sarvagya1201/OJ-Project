@@ -4,6 +4,8 @@ import axiosInstance from "../../services/axiosInstance";
 import MonacoEditor from "@monaco-editor/react";
 import ReactMarkdown from "react-markdown";
 import moment from "moment";
+import { Tabs, TabItem } from "flowbite-react";
+import { HiCode, HiOutlineSparkles } from "react-icons/hi";
 
 const Review = () => {
   const { submissionId } = useParams();
@@ -111,36 +113,17 @@ const Review = () => {
         </div>
       </div>
 
-      {/* Main Grid Layout */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 h-[75vh]">
-        {/* Submitted Code */}
-        <div className="border rounded-xl shadow bg-white dark:bg-gray-900 p-4 flex flex-col h-full">
-          <h2 className="text-xl font-semibold mb-2 text-gray-800 dark:text-gray-200">
-            Submitted Code
-          </h2>
-          <div className="flex-1">
-            <MonacoEditor
-              height="100%"
-              theme="vs-dark"
-              language={submission.language || "cpp"}
-              value={submission.code}
-              options={{ readOnly: true, fontSize: 14 }}
-            />
-          </div>
-        </div>
-
-        {/* AI Review */}
-        <div className="border rounded-xl shadow bg-white dark:bg-gray-900 p-4 overflow-auto h-full">
-          <h2 className="text-xl font-semibold mb-2 text-gray-800 dark:text-gray-200">
-            AI Code Review
-          </h2>
-          <div className="prose dark:prose-invert whitespace-pre-wrap">
+      {/* Main Tab Layout */}
+      {/* Tabs */}
+      <Tabs aria-label="Submission Review Tabs">
+        {/* Tab 1: AI Review */}
+        <TabItem active title="AI Review" icon={HiOutlineSparkles}>
+          <div className="mt-4 border p-4 rounded-lg shadow bg-white dark:bg-gray-900 prose dark:prose-invert">
+            <h2 className="text-xl font-bold mb-2">AI Code Review</h2>
             {loadingReview ? (
-              <div className="flex justify-center items-center h-full p-4">
-                <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-                <span className="ml-3 text-blue-500 text-sm font-medium">
-                  Getting AI Review...
-                </span>
+              <div className="flex items-center">
+                <div className="w-6 h-6 border-4 border-gray-500 border-t-transparent rounded-full animate-spin"></div>
+                <span className="ml-3 text-blue-500">Getting AI Review...</span>
               </div>
             ) : (
               <ReactMarkdown
@@ -150,7 +133,7 @@ const Review = () => {
                   ),
                   code: ({ node, ...props }) => (
                     <code
-                      className="bg-gray-100 dark:bg-gray-800 p-1 rounded"
+                      className="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded"
                       {...props}
                     />
                   ),
@@ -160,8 +143,20 @@ const Review = () => {
               </ReactMarkdown>
             )}
           </div>
-        </div>
-      </div>
+        </TabItem>
+        {/* Tab 2: Code */}
+        <TabItem  title="Submitted Code" icon={HiCode}>
+          <div className="mt-4 border p-2 rounded-lg shadow bg-white dark:bg-gray-900">
+            <MonacoEditor
+              height="100vh"
+              theme="vs-dark"
+              language={submission.language || "cpp"}
+              value={submission.code}
+              options={{ readOnly: true, fontSize: 14 }}
+            />
+          </div>
+        </TabItem>
+      </Tabs>
     </div>
   );
 };
