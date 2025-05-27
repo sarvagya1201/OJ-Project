@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import axiosInstance from "../../services/axiosInstance";
 import MonacoEditor from "@monaco-editor/react";
 import ReactMarkdown from "react-markdown";
-
+import moment from "moment";
 
 const Review = () => {
   const { submissionId } = useParams();
@@ -39,7 +39,7 @@ const Review = () => {
   useEffect(() => {
     const fetchAiReview = async () => {
       if (!problem || !submission) return;
-      
+
       if (!problem.description || !submission.code || !submission.status) {
         console.log("ERROR FETCHING DATA");
         return;
@@ -52,7 +52,6 @@ const Review = () => {
           question: problem.description.trim(),
           code: submission.code.trim(),
           verdict: submission.status,
-          // verdict: submission.status || "No verdict",
         });
 
         setAiReview(data.review || "No review received.");
@@ -74,32 +73,76 @@ const Review = () => {
     return <p className="p-6">❌ Submission or problem not found.</p>;
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-6 h-[90vh]">
-      {/* Code Editor */}
-      <div className="border p-4 rounded-lg shadow h-full overflow-hidden">
-        <h2 className="text-xl font-bold mb-2">Submitted Code</h2>
-        <MonacoEditor
-          height="calc(100% - 40px)"
-          theme="vs-dark"
-          language={submission.language || "cpp"}
-          value={submission.code}
-          options={{ readOnly: true, fontSize: 14 }}
-        />
+    <div className="p-6 space-y-6">
+      {/* Submission Meta Info */}
+      <div className="bg-white dark:bg-gray-900 rounded-xl shadow p-6 grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-700 dark:text-gray-300">
+        <div>
+          <span className="font-semibold">🕒 Submitted:</span>
+          <br />
+          {moment(submission.createdAt).format("MMMM Do YYYY, h:mm:ss a")}
+        </div>
+        <div>
+          <span className="font-semibold">📌 Problem:</span>
+          <br />
+          {problem.title}
+        </div>
+        <div>
+          <span className="font-semibold">💻 Language:</span>
+          <br />
+          {submission.language}
+        </div>
+        <div>
+          <span className="font-semibold">✅ Verdict:</span>
+          <br />
+          <span
+            className={`font-semibold ${
+              submission.status === "Accepted"
+                ? "text-green-600"
+                : "text-red-500"
+            }`}
+          >
+            {submission.status}
+          </span>
+        </div>
+        <div>
+          <span className="font-semibold">⚡ Run Time:</span>
+          <br />
+          {submission.time ? `${submission.time} ms` : "N/A"}
+        </div>
       </div>
 
-      {/* AI Review */}
-      <div className="border p-4 rounded-lg shadow overflow-auto h-full">
-        <h2 className="text-xl font-bold mb-2">AI Code Review</h2>
-        <div className="prose whitespace-pre-wrap">
-          {loadingReview ? (
-            <div className="flex justify-center items-center h-full p-4">
-              <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-              <span className="ml-3 text-blue-500 text-sm font-medium">
-                Getting AI Review...
-              </span>
-            </div>
-          ) : (
-            <div className="prose whitespace-pre-wrap">
+      {/* Main Grid Layout */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 h-[75vh]">
+        {/* Submitted Code */}
+        <div className="border rounded-xl shadow bg-white dark:bg-gray-900 p-4 flex flex-col h-full">
+          <h2 className="text-xl font-semibold mb-2 text-gray-800 dark:text-gray-200">
+            Submitted Code
+          </h2>
+          <div className="flex-1">
+            <MonacoEditor
+              height="100%"
+              theme="vs-dark"
+              language={submission.language || "cpp"}
+              value={submission.code}
+              options={{ readOnly: true, fontSize: 14 }}
+            />
+          </div>
+        </div>
+
+        {/* AI Review */}
+        <div className="border rounded-xl shadow bg-white dark:bg-gray-900 p-4 overflow-auto h-full">
+          <h2 className="text-xl font-semibold mb-2 text-gray-800 dark:text-gray-200">
+            AI Code Review
+          </h2>
+          <div className="prose dark:prose-invert whitespace-pre-wrap">
+            {loadingReview ? (
+              <div className="flex justify-center items-center h-full p-4">
+                <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                <span className="ml-3 text-blue-500 text-sm font-medium">
+                  Getting AI Review...
+                </span>
+              </div>
+            ) : (
               <ReactMarkdown
                 components={{
                   h1: ({ node, ...props }) => (
@@ -115,8 +158,8 @@ const Review = () => {
               >
                 {aiReview}
               </ReactMarkdown>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
     </div>
