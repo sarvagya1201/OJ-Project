@@ -5,6 +5,16 @@ import Submission from "../models/Submission.js";
 import Problem from "../models/Problem.js";
 import { compileViaApi } from "./compileviaAPIController.js";
 
+const normalizeOutput = (str) => {
+  return str
+    .replace(/\r\n/g, "\n") // convert Windows line endings to Unix
+    .replace(/\r/g, "\n") // convert Mac line endings to Unix
+    .trim() // remove leading/trailing newlines and spaces
+    .split("\n") // split into lines
+    .map((line) => line.trim()) // trim each line
+    .join("\n"); // rejoin
+};
+
 export const createSubmission = async (req, res) => {
   try {
     const { problemId, code, language } = req.body;
@@ -27,7 +37,15 @@ export const createSubmission = async (req, res) => {
     let verdict = result.verdict || "error";
     if (result.success) {
       const actualOutput = result.output.trim();
-      if (actualOutput === expectedOutput) {
+      const userOutN = normalizeOutput(actualOutput);
+      const expectedOutN = normalizeOutput(expectedOutput);
+      // if (actualOutput === expectedOutput) {
+      //   verdict = "Accepted";
+      // } else {
+      //   verdict = "Wrong Answer";
+      // }
+
+      if (userOutN === expectedOutN) {
         verdict = "Accepted";
       } else {
         verdict = "Wrong Answer";
