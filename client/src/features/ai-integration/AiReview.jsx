@@ -1,16 +1,17 @@
-// src/pages/Review.jsx
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axiosInstance from "../../services/axiosInstance";
 import MonacoEditor from "@monaco-editor/react";
 import ReactMarkdown from "react-markdown";
 
+
 const Review = () => {
   const { submissionId } = useParams();
   const [submission, setSubmission] = useState(null);
   const [problem, setProblem] = useState(null);
   const [aiReview, setAiReview] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [loadingReview, setLoadingReview] = useState(false);
+  const [loadingData, setLoadingData] = useState(true);
 
   useEffect(() => {
     const fetchSubmissionAndProblem = async () => {
@@ -27,7 +28,7 @@ const Review = () => {
       } catch (err) {
         console.error("❌ Error fetching data:", err);
       } finally {
-        setLoading(false);
+        setLoadingData(false);
       }
     };
 
@@ -37,14 +38,21 @@ const Review = () => {
   // Call Gemini API with problem + code + verdict
   useEffect(() => {
     const fetchAiReview = async () => {
-      if (!problem || !submission || !problem.description || !submission.code)
+      if (!problem || !submission) return;
+      
+      if (!problem.description || !submission.code || !submission.status) {
+        console.log("ERROR FETCHING DATA");
         return;
-      setLoading(true);
+      }
+
+      console.log("Calling Gemini API with verdict:", submission.status);
+      setLoadingReview(true);
       try {
         const { data } = await axiosInstance.post("/gemini/review", {
           question: problem.description.trim(),
           code: submission.code.trim(),
-          verdict: submission.verdict || "No verdict",
+          verdict: submission.status,
+          // verdict: submission.status || "No verdict",
         });
 
         setAiReview(data.review || "No review received.");
@@ -55,13 +63,13 @@ const Review = () => {
         );
         setAiReview("❌ Failed to fetch AI review.");
       }
-      setLoading(false);
+      setLoadingReview(false);
     };
 
     fetchAiReview();
   }, [problem, submission]);
 
-  if (loading) return <p className="p-6">Loading...</p>;
+  if (loadingData) return <p className="p-6">Loading...</p>;
   if (!submission || !problem)
     return <p className="p-6">❌ Submission or problem not found.</p>;
 
@@ -83,7 +91,7 @@ const Review = () => {
       <div className="border p-4 rounded-lg shadow overflow-auto h-full">
         <h2 className="text-xl font-bold mb-2">AI Code Review</h2>
         <div className="prose whitespace-pre-wrap">
-          {loading ? (
+          {loadingReview ? (
             <div className="flex justify-center items-center h-full p-4">
               <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
               <span className="ml-3 text-blue-500 text-sm font-medium">
@@ -98,7 +106,10 @@ const Review = () => {
                     <h1 className="text-2xl font-bold" {...props} />
                   ),
                   code: ({ node, ...props }) => (
-                    <code className="bg-gray-100 dark:bg-gray-800 p-1 rounded" {...props} />
+                    <code
+                      className="bg-gray-100 dark:bg-gray-800 p-1 rounded"
+                      {...props}
+                    />
                   ),
                 }}
               >

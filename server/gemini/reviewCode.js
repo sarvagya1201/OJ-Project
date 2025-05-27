@@ -46,7 +46,10 @@ export const getCodeReview = async (question, verdict, code) => {
     promptHeader = rejectedPromptHeader;
   }
   const fullPrompt = `${promptHeader}Question:\n${question}\n\nCode:\n${code}`;
-
+  // console.log(verdict);
+  
+  // console.log(fullPrompt);
+  
   try {
     const response = await genAI.models.generateContent({
       model: "gemini-2.0-flash",
