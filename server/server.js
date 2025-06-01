@@ -9,7 +9,6 @@ import submissionRoutes from "./routes/submissionRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import geminiRoutes from "./routes/geminiRoutes.js";
 
-
 dotenv.config();
 const app = express();
 
@@ -24,17 +23,18 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.get("/", (req, res) => {
+  res.json({ online: "OJ" });
+});
+
 app.use("/api/auth", authRoutes);
 app.use("/api/problems", problemRoutes);
 app.use("/api/submissions", submissionRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/gemini", geminiRoutes);
 
-
 // Connect to MongoDB
 connectDB();
-
-
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
