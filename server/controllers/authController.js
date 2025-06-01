@@ -14,8 +14,10 @@ const createTokenAndSetCookie = (user, res) => {
 
   res.cookie("token", token, {
     httpOnly: true,
-    secure: false, // set to true in production with HTTPS
-    sameSite: "Lax",
+    // secure: false, // set to true in production with HTTPS
+    secure: true,
+    // sameSite: "Lax",
+    sameSite: "None",
     maxAge: 24 * 60 * 60 * 1000, // 1 day
   });
 
