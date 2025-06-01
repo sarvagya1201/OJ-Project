@@ -1,4 +1,4 @@
-import UserDashboard from "../features/user/userDashboard";
+import UserDashboard from "../features/user/UserDashboard";
 import { Link } from "react-router-dom";
 
 const UserDashboardPage = () => {

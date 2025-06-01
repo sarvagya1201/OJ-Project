@@ -1,5 +1,5 @@
 // LoginPage.jsx
-import Login from '../features/auth/login';
+import Login from '../features/auth/Login';
 import { Link } from 'react-router-dom';
 
 const LoginPage = () => {
