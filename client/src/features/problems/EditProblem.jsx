@@ -167,19 +167,40 @@ const EditProblem = () => {
           className="w-full p-2 border rounded"
         />
 
-        <div className="flex gap-4">
-          <input
-            type="file"
-            name="testInput"
-            onChange={handleFileChange}
-            className="flex-1"
-          />
-          <input
-            type="file"
-            name="testOutput"
-            onChange={handleFileChange}
-            className="flex-1"
-          />
+        <div className="flex items-end gap-4 mb-3">
+          <div>
+            <label className="block mb-1 text-xs font-medium text-gray-700">
+              Test Input
+            </label>
+            <label className="inline-flex items-center px-3 py-1.5 bg-blue-500 text-white text-sm rounded-md cursor-pointer hover:bg-blue-600 transition-colors w-36 justify-center">
+              Upload Input
+              <input
+                type="file"
+                name="testInput"
+                accept=".txt"
+                onChange={handleFileChange}
+                required
+                className="hidden"
+              />
+            </label>
+          </div>
+
+          <div>
+            <label className="block mb-1 text-xs font-medium text-gray-700">
+              Test Output
+            </label>
+            <label className="inline-flex items-center px-3 py-1.5 bg-green-500 text-white text-sm rounded-md cursor-pointer hover:bg-green-600 transition-colors w-36 justify-center">
+              Upload Output
+              <input
+                type="file"
+                name="testOutput"
+                accept=".txt"
+                onChange={handleFileChange}
+                required
+                className="hidden"
+              />
+            </label>
+          </div>
         </div>
 
         <button
