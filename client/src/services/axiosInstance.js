@@ -1,10 +1,10 @@
-import axios from 'axios';
+import axios from "axios";
 
 const axiosInstance = axios.create({
-  baseURL: 'http://localhost:5000/api', // your backend base URL
+  baseURL: import.meta.env.VITE_API_BASE_URL, // backend base URL
   withCredentials: true, // send cookies
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
 });
 

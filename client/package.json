@@ -16,6 +16,7 @@
     "@tailwindcss/vite": "^4.1.6",
     "@uiw/react-heat-map": "^2.3.3",
     "axios": "^1.9.0",
+    "dotenv": "^16.5.0",
     "flowbite-react": "^0.11.7",
     "framer-motion": "^12.11.3",
     "katex": "^0.16.22",
