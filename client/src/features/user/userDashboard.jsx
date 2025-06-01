@@ -59,7 +59,7 @@ const UserDashboard = () => {
 
   return (
     <div className="max-w-6xl mx-auto p-4 dark:bg-gray-900 dark:text-gray-200 min-h-screen">
-      <h1 className="text-3xl font-bold mb-4">User Dashboard</h1>
+      
 
       {/* User Info */}
       <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-4 mb-6">

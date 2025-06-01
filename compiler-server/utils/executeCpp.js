@@ -2,6 +2,26 @@ import { spawn } from "child_process";
 import fs from "fs";
 import { performance } from "perf_hooks";
 
+function classifyRuntimeError(code, stderr) {
+  // Windows-specific codes
+  const errorCodeMap = {
+    3221225477: "Segmentation Fault",
+    3221225620: "Division by Zero",
+    3221225781: "Stack Overflow",
+  };
+
+  if (code in errorCodeMap) return errorCodeMap[code];
+
+  if (stderr.toLowerCase().includes("segmentation fault"))
+    return "Segmentation Fault";
+  if (stderr.toLowerCase().includes("floating point"))
+    return "Floating Point Exception";
+  if (stderr.toLowerCase().includes("aborted")) return "Aborted";
+  if (stderr) return stderr.trim();
+
+  return `Runtime Error (exit code ${code})`;
+}
+
 export default function executeCpp(sourceFile, execFile, input) {
   return new Promise((resolve) => {
     const compile = spawn("g++", [sourceFile, "-o", execFile]);
@@ -31,36 +51,35 @@ export default function executeCpp(sourceFile, execFile, input) {
       let timedOut = false;
 
       const startTime = performance.now();
+
       const timeout = setTimeout(() => {
         timedOut = true;
         runProcess.kill("SIGKILL");
-      }, 2000); // 2 seconds
+      }, 2000); // 2s timeout
 
-      runProcess.stdin.on("error", (err) => {
+      runProcess.stdin.on("error", () => {
         clearTimeout(timeout);
         const endTime = performance.now();
         return resolve({
           success: false,
-          error: "Wrong Answer", // stdin crash due to unexpected input
-          verdict: "Wrong Answer",
+          error: "Input Error",
+          verdict: "Runtime Error",
           time: parseFloat((endTime - startTime).toFixed(2)),
         });
       });
 
-      setImmediate(() => {
-        try {
-          runProcess.stdin.write(input);
-          runProcess.stdin.end();
-        } catch (err) {
-          clearTimeout(timeout);
-          return resolve({
-            success: false,
-            error: "Wrong Answer", // stdin write failed
-            verdict: "Wrong Answer",
-            time: 0,
-          });
-        }
-      });
+      try {
+        runProcess.stdin.write(input);
+        runProcess.stdin.end();
+      } catch (err) {
+        clearTimeout(timeout);
+        return resolve({
+          success: false,
+          error: "Failed to send input",
+          verdict: "Runtime Error",
+          time: 0,
+        });
+      }
 
       runProcess.stdout.on("data", (data) => {
         stdout += data.toString();
@@ -84,17 +103,19 @@ export default function executeCpp(sourceFile, execFile, input) {
           });
         }
 
-        // Handle segmentation faults or bad input crashes
-        if (code !== 0 || stderr.includes("Segmentation fault") || stderr) {
+        // Runtime error detection based on code or stderr
+        if (code !== 0 || stderr) {
+          const runtimeError = classifyRuntimeError(code, stderr);
           return resolve({
             success: false,
-            error: "Wrong Answer",
-            verdict: "Wrong Answer",
+            error: runtimeError,
+            verdict: "Runtime Error",
             time: executionTime,
           });
         }
 
-        resolve({
+        // Successful execution
+        return resolve({
           success: true,
           output: stdout.trim(),
           verdict: "Executed",

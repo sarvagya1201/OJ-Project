@@ -21,36 +21,27 @@ export const createSubmission = async (req, res) => {
     if (!mongoose.Types.ObjectId.isValid(problemId)) {
       return res.status(400).json({ message: "Invalid problem ID format" });
     }
+
     const problem = await Problem.findById(problemId);
     if (!problem) return res.status(404).json({ message: "Problem not found" });
 
-    const input = fs.readFileSync(
-      path.join(process.cwd(), problem.testInputFile),
-      "utf-8"
-    );
-    const expectedOutput = fs
-      .readFileSync(path.join(process.cwd(), problem.testOutputFile), "utf-8")
-      .trim();
+    const inputPath = path.join(process.cwd(), problem.testInputFile);
+    const outputPath = path.join(process.cwd(), problem.testOutputFile);
+
+    const input = fs.readFileSync(inputPath, "utf-8");
+    const expectedOutput = fs.readFileSync(outputPath, "utf-8").trim();
 
     const result = await compileViaApi(language, code, input);
 
-    let verdict = result.verdict || "error";
-    if (result.success) {
-      const actualOutput = result.output.trim();
-      const userOutN = normalizeOutput(actualOutput);
+    let verdict;
+    if (!result.success) {
+      verdict = result.verdict || "error";
+    } else {
+      const userOutN = normalizeOutput(result.output.trim());
       const expectedOutN = normalizeOutput(expectedOutput);
-      // if (actualOutput === expectedOutput) {
-      //   verdict = "Accepted";
-      // } else {
-      //   verdict = "Wrong Answer";
-      // }
-
-      if (userOutN === expectedOutN) {
-        verdict = "Accepted";
-      } else {
-        verdict = "Wrong Answer";
-      }
+      verdict = userOutN === expectedOutN ? "Accepted" : "Wrong Answer";
     }
+    
     const submission = new Submission({
       user: req.user.id,
       problem: problem._id,
