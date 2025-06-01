@@ -5,6 +5,7 @@ import HeatMap from "@uiw/react-heat-map";
 import { Link } from "react-router-dom";
 import { Tooltip } from "react-tooltip";
 import "react-tooltip/dist/react-tooltip.css";
+import "../../Heatmap.css";
 
 const UserDashboard = () => {
   const [userData, setUserData] = useState(null);
@@ -33,6 +34,7 @@ const UserDashboard = () => {
     const fetchDashboardData = async () => {
       try {
         const response = await axiosInstance.get("/user/dashboard");
+
         setUserData(response.data);
       } catch (error) {
         console.error("Failed to fetch dashboard data", error);
@@ -54,13 +56,13 @@ const UserDashboard = () => {
   }, [heatmapValues]);
   if (!userData) return <p className="text-center mt-10">Loading...</p>;
 
-  const sixMonthsAgo = moment().subtract(6, "months").format("YYYY-MM-DD");
-  const today = moment().format("YYYY-MM-DD");
-
+  // const sixMonthsAgo = moment().subtract(6, "months").format("YYYY-MM-DD");
+  // const today = moment().format("YYYY-MM-DD");
+  const today = new Date(); // JS Date object for today
+  const sixMonthsAgo = moment().subtract(12, "months").toDate(); // convert moment to JS Date
+  // console.log(sixMonthsAgo);
   return (
     <div className="max-w-6xl mx-auto p-4 dark:bg-gray-900 dark:text-gray-200 min-h-screen">
-      
-
       {/* User Info */}
       <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-4 mb-6">
         <p className="text-lg font-medium">👤 {userData.name}</p>
@@ -126,25 +128,29 @@ const UserDashboard = () => {
 
       {/* Heatmap */}
       <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-4 mb-6 w-full overflow-x-auto">
-        <h2 className="text-xl font-semibold mb-4">
+        <h2 className="text-xl font-semibold mb-4 text-black dark:text-white">
           🔥 Activity Heatmap (Last 6 Months)
         </h2>
-        <div className="min-w-[1000px]">
-          {" "}
+        <div className="min-w-[1000px] justify-items-center">
           {/* Ensures wide layout */}
           <HeatMap
             value={heatmapValues}
             startDate={sixMonthsAgo}
-            width={1000}
+            width={1100}
+            style={{
+              color: "var(--font-color)", // Use CSS var for font color
+              fontSize: "0.7rem",
+              "--rhm-rect-active": "var(--rhm-rect-active)", // Active rect color from var
+            }}
             endDate={today}
-            rectSize={14}
+            rectSize={16}
             space={3}
             panelColors={{
-              0: "#ebedf0",
-              1: "#c6e48b",
-              3: "#7bc96f",
-              5: "#239a3b",
-              10: "#196127",
+              0: "var(--color-0)", // Use CSS vars for panel colors
+              1: "var(--color-1)",
+              3: "var(--color-3)",
+              5: "var(--color-5)",
+              10: "var(--color-10)",
             }}
             rectRender={(props, data) => {
               return (
