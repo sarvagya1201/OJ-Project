@@ -3,7 +3,7 @@ import fs from "fs";
 import mongoose from "mongoose";
 import Submission from "../models/Submission.js";
 import Problem from "../models/Problem.js";
-import { compileViaApi } from "./compileviaAPIController.js";
+import { compileViaApi } from "./compileViaApiController.js";
 
 const normalizeOutput = (str) => {
   return str
