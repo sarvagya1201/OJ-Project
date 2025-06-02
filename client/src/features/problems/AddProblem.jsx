@@ -90,38 +90,52 @@ const AddProblem = () => {
         ))}
 
         <div className="flex items-center space-x-4 mb-3">
-          <div>
-            <label className="block mb-1 text-xs font-medium text-gray-700">
-              Test Input
-            </label>
-            <label className="inline-flex items-center px-3 py-1.5 bg-blue-500 text-white text-sm rounded-md cursor-pointer hover:bg-blue-600 transition-colors">
-              Upload Input
-              <input
-                type="file"
-                name="testInput"
-                accept=".txt"
-                onChange={handleFileChange}
-                required
-                className="hidden"
-              />
-            </label>
+          <div className="flex items-center space-x-2">
+            <div>
+              <label className="block mb-1 text-xs font-medium text-gray-700">
+                Test Input
+              </label>
+              <label className="inline-flex items-center px-3 py-1.5 bg-blue-500 text-white text-sm rounded-md cursor-pointer hover:bg-blue-600 transition-colors">
+                Upload Input
+                <input
+                  type="file"
+                  name="testInput"
+                  accept=".txt"
+                  onChange={handleFileChange}
+                  required
+                  className="hidden"
+                />
+              </label>
+            </div>
+            {testInputFile && (
+              <span className="text-sm text-gray-700">
+                {testInputFile.name}
+              </span>
+            )}
           </div>
 
-          <div>
-            <label className="block mb-1 text-xs font-medium text-gray-700">
-              Test Output
-            </label>
-            <label className="inline-flex items-center px-3 py-1.5 bg-green-500 text-white text-sm rounded-md cursor-pointer hover:bg-green-600 transition-colors">
-              Upload Output
-              <input
-                type="file"
-                name="testOutput"
-                accept=".txt"
-                onChange={handleFileChange}
-                required
-                className="hidden"
-              />
-            </label>
+          <div className="flex items-center space-x-2">
+            <div>
+              <label className="block mb-1 text-xs font-medium text-gray-700">
+                Test Output
+              </label>
+              <label className="inline-flex items-center px-3 py-1.5 bg-green-500 text-white text-sm rounded-md cursor-pointer hover:bg-green-600 transition-colors">
+                Upload Output
+                <input
+                  type="file"
+                  name="testOutput"
+                  accept=".txt"
+                  onChange={handleFileChange}
+                  required
+                  className="hidden"
+                />
+              </label>
+            </div>
+            {testOutputFile && (
+              <span className="text-sm text-gray-700">
+                {testOutputFile.name}
+              </span>
+            )}
           </div>
         </div>
 

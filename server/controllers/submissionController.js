@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import Submission from "../models/Submission.js";
 import Problem from "../models/Problem.js";
 import { compileViaApi } from "./compileViaApiController.js";
+import { downloadFileFromS3 } from "./s3Controller.js";
 
 const normalizeOutput = (str) => {
   return str
@@ -25,12 +26,10 @@ export const createSubmission = async (req, res) => {
     const problem = await Problem.findById(problemId);
     if (!problem) return res.status(404).json({ message: "Problem not found" });
 
-    const inputPath = path.join(process.cwd(), problem.testInputFile);
-    const outputPath = path.join(process.cwd(), problem.testOutputFile);
-
-    const input = fs.readFileSync(inputPath, "utf-8");
-    const expectedOutput = fs.readFileSync(outputPath, "utf-8").trim();
-
+     // 🧾 Read test cases from S3
+    const input = await downloadFileFromS3(problem.testInputFile);
+    const expectedOutput = (await downloadFileFromS3(problem.testOutputFile)).trim();
+    
     const result = await compileViaApi(language, code, input);
 
     let verdict;
