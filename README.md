@@ -14,7 +14,7 @@ A modern, full-featured online judge built with the **MERN stack**, designed for
 
 ## 🏗 System Architecture Diagram
 
-![System Architecture](./docs/system_architecture.png)
+![System Architecture](./docs/system_architecture1.png)
 
 ---
 
