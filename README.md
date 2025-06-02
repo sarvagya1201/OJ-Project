@@ -1,7 +1,20 @@
 
-# 🧠 AI-Powered Online Judge
+# 🧠 Algorun Judge
 
 A modern, full-featured online judge built with the **MERN stack**, designed for solving coding problems, managing submissions, and receiving AI-powered code reviews. This project includes real-time code execution in multiple languages, problem management for admins, and user dashboards with analytics and streak tracking.
+
+
+---
+
+## 🌟 Live Demo
+
+🚀 **Check it out here:** [https://oj-project-lyart.vercel.app/](https://oj-project-lyart.vercel.app/)
+
+---
+
+## 🏗 System Architecture Diagram
+
+![System Architecture](./docs/system_architecture.png)
 
 ---
 
@@ -15,8 +28,7 @@ A modern, full-featured online judge built with the **MERN stack**, designed for
 📊 Analytics dashboard with streaks and heatmap  
 🔐 JWT authentication with HTTP-only cookies  
 🐳 Dockerized compiler microservice  
-📁 File-based test case management  
-🚫 Handles edge cases like extra newlines, whitespaces, and TLE  
+📁 File-based test case management
 
 ---
 
@@ -30,15 +42,17 @@ A modern, full-featured online judge built with the **MERN stack**, designed for
 ### Backend:
 - Node.js & Express  
 - MongoDB Atlas  
-- Multer (for uploading test cases)  
-- JWT & bcrypt
+- AWS S3 (for static storage of test case files)  
+- Multer (for file handling)  
+- JWT & bcrypt (for authentication)
 
 ### Compiler Service:
 - Node.js (`child_process`)  
-- Docker (isolated code execution)
+- Docker (isolated code execution)  
+- Deployed on AWS EC2, with Docker image pushed to AWS ECR
 
 ### AI Integration:
-- Gemini API (Google)
+- Gemini API (Google Generative AI)
 
 ---
 
@@ -51,9 +65,12 @@ A modern, full-featured online judge built with the **MERN stack**, designed for
 [Main Backend - Node.js + Express]
       |
       ├── MongoDB Atlas (users, problems, submissions)
+      ├── AWS S3 (static storage: test case files)
       └── Compiler Server (code execution)
               |
-              └── Runs inside Docker
+              └──  Docker container deployed on AWS EC2
+                    (Docker image pulled from AWS ECR)
+              
 ```
 
 ---
@@ -61,16 +78,24 @@ A modern, full-featured online judge built with the **MERN stack**, designed for
 ## 📁 Folder Structure
 
 ```
-/frontend               → React app
-/backend
-  ├── models            → Mongoose models
-  ├── routes            → Auth, problems, submissions
-  ├── controllers       → Logic for each route
-  ├── middleware        → Auth, role-based access
-  ├── uploads           → Test cases (input/output)
+/client               → React app
+/server
+  ├── config                 → Configuration files (AWS, DB, app config)
+  ├── controllers            → Route logic (auth, problems, submissions, S3, Gemini API)
+  ├── gemini                 → Gemini API integration modules
+  ├── middleware             → Auth checks, upload handling
+  ├── models                 → Mongoose schemas and models
+  ├── routes                 → Express routes (auth, problems, submissions, Gemini)
+  ├── uploads                → Local storage for uploaded files (temp, before using S3)
+  ├── .env.sample            → Example environment variables
 /compiler-server
-  ├── codefiles         → Temp code files
-  ├── executables       → Compiled binaries
+  ├── code_files → Temporary code files for execution
+  ├── executables → Compiled binaries
+  ├── cron → Scheduled cleanup or background tasks
+  ├── routes → Express routes (e.g., runRoute.js)
+  ├── utils → Helper modules (e.g., executeCpp.js, executeJava.js, cleanup.js)
+  ├── Dockerfile → Docker build instructions
+  ├── server.js → Entry point for compiler server
 ```
 
 ---
@@ -80,18 +105,18 @@ A modern, full-featured online judge built with the **MERN stack**, designed for
 ### 1️⃣ Clone the Repo
 
 ```bash
-git clone https://github.com/your-username/online-judge-ai.git
-cd online-judge-ai
+git clone https://github.com/sarvagya1201/OJ-Project.git
+cd OJ-Project
 ```
 
 ### 2️⃣ Backend Setup
 
 ```bash
-cd backend
+cd server
 npm install
 cp .env.example .env
 # Fill in Mongo URI, JWT_SECRET, Gemini API Key etc.
-npm run dev
+npm start
 ```
 
 ### 3️⃣ Compiler Server Setup
@@ -101,7 +126,7 @@ cd compiler-server
 npm install
 
 # For local use
-node index.js
+node server.js
 
 # OR run in Docker
 docker build -t oj-compiler .
@@ -111,7 +136,7 @@ docker run -p 5001:5001 oj-compiler
 ### 4️⃣ Frontend Setup
 
 ```bash
-cd frontend
+cd client
 npm install
 npm run dev
 ```
@@ -153,6 +178,10 @@ MONGO_URI=mongodb+srv://<user>:<pass>@cluster.mongodb.net/onlinejudge
 JWT_SECRET=your_jwt_secret
 GEMINI_API_KEY=your_gemini_key
 COMPILER_SERVER=http://localhost:5001
+S3_ACCESS_KEY_ID=your_access_key
+S3_SECRET_ACCESS_KEY=your_secret_access_key
+S3_REGION=your_aws_region
+S3_BUCKET_NAME=your_bucket_name
 ```
 
 ---
@@ -186,10 +215,17 @@ COMPILER_SERVER=http://localhost:5001
 
 ## 🖼 Screenshots
 
-- Problem submission flow  
-- AI feedback panel  
-- Admin dashboard  
-- User dashboard with streaks  
+| Home Page                                | User Dashboard                            |
+|------------------------------------------|------------------------------------------|
+| ![Home](./docs/screenshots/home.png)     | ![Dashboard](./docs/screenshots/dashboard.png) |
+
+| All Problems View                        | Single Problem View                      |
+|------------------------------------------|-----------------------------------------|
+| ![All Problems](./docs/screenshots/allprob.png) | ![Problem](./docs/screenshots/prob.png) |
+
+| All Submissions                          | AI Feedback Panel                        |
+|------------------------------------------|-----------------------------------------|
+| ![All Submissions](./docs/screenshots/allsub.png) | ![AI Feedback](./docs/screenshots/ai.png) |
 
 ---
 
