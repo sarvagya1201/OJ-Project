@@ -59,7 +59,7 @@ const UserDashboard = () => {
   // const sixMonthsAgo = moment().subtract(6, "months").format("YYYY-MM-DD");
   // const today = moment().format("YYYY-MM-DD");
   const today = new Date(); // JS Date object for today
-  const sixMonthsAgo = moment().subtract(12, "months").toDate(); // convert moment to JS Date
+  const oneYearAgo = moment().subtract(12, "months").toDate(); // convert moment to JS Date
   // console.log(sixMonthsAgo);
   return (
     <div className="max-w-6xl mx-auto p-4 dark:bg-gray-900 dark:text-gray-200 min-h-screen">
@@ -129,13 +129,13 @@ const UserDashboard = () => {
       {/* Heatmap */}
       <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-4 mb-6 w-full overflow-x-auto">
         <h2 className="text-xl font-semibold mb-4 text-black dark:text-white">
-          🔥 Activity Heatmap (Last 6 Months)
+          🔥 Activity Heatmap (Last 1 Year)
         </h2>
         <div className="min-w-[1000px] justify-items-center">
           {/* Ensures wide layout */}
           <HeatMap
             value={heatmapValues}
-            startDate={sixMonthsAgo}
+            startDate={oneYearAgo}
             width={1100}
             style={{
               color: "var(--font-color)", // Use CSS var for font color
