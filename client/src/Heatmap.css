@@ -1,24 +1,22 @@
-/* HEATMAP */
-/* Light theme colors */
 :root {
-  --color-0: #ebedf0;
-  --color-1: #c6e48b;
-  --color-3: #7bc96f;
-  --color-5: #239a3b;
-  --color-10: #196127;
+  --color-0: #ebedf0;   /* Very light gray */
+  --color-1: #d6e685;   /* Soft green */
+  --color-3: #8cc665;   /* Medium green */
+  --color-5: #44a340;   /* Deep green */
+  --color-10: #1e6823;  /* Dark green */
 
   --font-color: #000000;
-  --rhm-rect-active: black;
+  --rhm-rect-active: #000000;
 }
 
-/* Dark theme colors */
-.dark {
-  --color-0: #23252c;
-  --color-1: #355e3b;
-  --color-3: #4f7c4a;
-  --color-5: #6a9a5a;
-  --color-10: #9fcb85;
 
-  --font-color: #eeeeee;
-  --rhm-rect-active: #ddd;
+.dark {
+  --color-0: #1e1e1e;   /* Very dark background block */
+  --color-1: #264d3c;   /* Muted green */
+  --color-3: #3d7b57;   /* Softer mid green */
+  --color-5: #5ba56d;   /* Brighter mid green */
+  --color-10: #9be49f;  /* Vibrant highlight */
+
+  --font-color: #f5f5f5;
+  --rhm-rect-active: #ffffff;
 }
