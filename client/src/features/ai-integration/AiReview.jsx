@@ -6,6 +6,7 @@ import ReactMarkdown from "react-markdown";
 import moment from "moment";
 import { Tabs, TabItem } from "flowbite-react";
 import { HiCode, HiOutlineSparkles } from "react-icons/hi";
+import { motion } from "framer-motion";
 
 const Review = () => {
   const { submissionId } = useParams();
@@ -33,21 +34,15 @@ const Review = () => {
         setLoadingData(false);
       }
     };
-
     fetchSubmissionAndProblem();
   }, [submissionId]);
 
-  // Call Gemini API with problem + code + verdict
   useEffect(() => {
     const fetchAiReview = async () => {
       if (!problem || !submission) return;
-
-      if (!problem.description || !submission.code || !submission.status) {
-        console.log("ERROR FETCHING DATA");
+      if (!problem.description || !submission.code || !submission.status)
         return;
-      }
 
-      console.log("Calling Gemini API with verdict:", submission.status);
       setLoadingReview(true);
       try {
         const { data } = await axiosInstance.post("/gemini/review", {
@@ -55,7 +50,6 @@ const Review = () => {
           code: submission.code.trim(),
           verdict: submission.status,
         });
-
         setAiReview(data.review || "No review received.");
       } catch (error) {
         console.error(
@@ -66,18 +60,40 @@ const Review = () => {
       }
       setLoadingReview(false);
     };
-
     fetchAiReview();
   }, [problem, submission]);
 
-  if (loadingData) return <p className="p-6">Loading...</p>;
+  if (loadingData)
+    return (
+      <motion.p
+        className="p-6 text-center text-zinc-700 dark:text-zinc-300"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+      >
+        Loading...
+      </motion.p>
+    );
+
   if (!submission || !problem)
-    return <p className="p-6">❌ Submission or problem not found.</p>;
+    return (
+      <motion.p
+        className="p-6 text-center text-red-500"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+      >
+        ❌ Submission or problem not found.
+      </motion.p>
+    );
 
   return (
-    <div className="p-6 space-y-6">
+    <motion.div
+      className="p-6 space-y-6 max-w-6xl mx-auto"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+    >
       {/* Submission Meta Info */}
-      <div className="bg-white dark:bg-gray-900 rounded-xl shadow p-6 grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-700 dark:text-gray-300">
+      <div className="bg-white dark:bg-zinc-900 rounded-xl shadow-lg p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 text-sm text-zinc-800 dark:text-zinc-300">
         <div>
           <span className="font-semibold">🕒 Submitted:</span>
           <br />
@@ -93,19 +109,17 @@ const Review = () => {
           <br />
           {submission.language}
         </div>
-        <div>
-          <span className="font-semibold">✅ Verdict:</span>
-          <br />
-          <span
-            className={`font-semibold ${
-              submission.status === "Accepted"
-                ? "text-green-600"
-                : "text-red-500"
-            }`}
-          >
-            {submission.status}
-          </span>
-        </div>
+      <div>
+  <span className="font-semibold">✅ Verdict:</span>
+  <br />
+  <span
+    className={`font-semibold text-lg md:text-xl ${
+      submission.status === "Accepted" ? "text-green-600" : "text-red-500"
+    }`}
+  >
+    {submission.status}
+  </span>
+</div>
         <div>
           <span className="font-semibold">⚡ Run Time:</span>
           <br />
@@ -113,27 +127,43 @@ const Review = () => {
         </div>
       </div>
 
-      {/* Main Tab Layout */}
       {/* Tabs */}
-      <Tabs aria-label="Submission Review Tabs">
-        {/* Tab 1: AI Review */}
+      <Tabs aria-label="Submission Review Tabs" className="bg-transparent">
+        {/* AI Review Tab */}
         <TabItem active title="AI Review" icon={HiOutlineSparkles}>
-          <div className="mt-4 border p-4 rounded-lg shadow bg-white dark:bg-gray-900 prose dark:prose-invert">
-            <h2 className="text-xl font-bold mb-2">AI Code Review</h2>
+          <motion.div
+            className="mt-4 border p-6 rounded-xl shadow-lg bg-white dark:bg-zinc-900 prose dark:prose-invert min-h-[200px]"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+          >
+            <h2 className="text-2xl font-bold mb-4">AI Code Review</h2>
+
             {loadingReview ? (
-              <div className="flex items-center">
-                <div className="w-6 h-6 border-4 border-gray-500 border-t-transparent rounded-full animate-spin"></div>
-                <span className="ml-3 text-blue-500">Getting AI Review...</span>
+              <div className="flex items-center justify-center space-x-3 text-blue-600 dark:text-blue-400">
+                <div className="w-7 h-7 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                <span className="font-medium text-lg">
+                  Getting AI Review...
+                </span>
               </div>
             ) : (
               <ReactMarkdown
                 components={{
                   h1: ({ node, ...props }) => (
-                    <h1 className="text-2xl font-bold" {...props} />
+                    <h1 className="text-3xl font-bold" {...props} />
+                  ),
+                  h2: ({ node, ...props }) => (
+                    <h2 className="text-2xl font-semibold" {...props} />
                   ),
                   code: ({ node, ...props }) => (
                     <code
-                      className="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded"
+                      className="bg-gray-100 dark:bg-zinc-800 px-2 py-1 rounded font-mono"
+                      {...props}
+                    />
+                  ),
+                  pre: ({ node, ...props }) => (
+                    <pre
+                      className="bg-gray-100 dark:bg-zinc-800 rounded p-3 overflow-auto"
                       {...props}
                     />
                   ),
@@ -142,22 +172,33 @@ const Review = () => {
                 {aiReview}
               </ReactMarkdown>
             )}
-          </div>
+          </motion.div>
         </TabItem>
-        {/* Tab 2: Code */}
-        <TabItem  title="Submitted Code" icon={HiCode}>
-          <div className="mt-4 border p-2 rounded-lg shadow bg-white dark:bg-gray-900">
+
+        {/* Submitted Code Tab */}
+        <TabItem title="Submitted Code" icon={HiCode}>
+          <motion.div
+            className="mt-4 border rounded-xl shadow-lg bg-white dark:bg-zinc-900"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+            style={{ height: "70vh" }}
+          >
             <MonacoEditor
-              height="100vh"
+              height="100%"
               theme="vs-dark"
               language={submission.language || "cpp"}
               value={submission.code}
-              options={{ readOnly: true, fontSize: 14 }}
+              options={{
+                readOnly: true,
+                fontSize: 14,
+                minimap: { enabled: false },
+              }}
             />
-          </div>
+          </motion.div>
         </TabItem>
       </Tabs>
-    </div>
+    </motion.div>
   );
 };
 

@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { submitCode } from "../../services/submissionService";
 import axiosInstance from "../../services/axiosInstance";
-import { Link } from "react-router-dom";
 import CodeEditor from "../../components/CodeEditor";
-import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 
-const SubmitAIForm = () => {
+export default function SubmitAIForm() {
   const { problemId } = useParams();
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   const [code, setCode] = useState("");
   const [language, setLanguage] = useState("cpp");
@@ -17,7 +17,6 @@ const SubmitAIForm = () => {
   const [message, setMessage] = useState("");
   const [problemTitle, setProblemTitle] = useState("");
   const [problemDescription, setProblemDescription] = useState("");
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProblem = async () => {
@@ -37,30 +36,21 @@ const SubmitAIForm = () => {
     e.preventDefault();
 
     if (!user) {
-      setMessage("Please login to submit.");
+      setMessage("⚠️ Please login to submit.");
       return;
     }
+
     if (!code.trim()) {
       setMessage("❌ Code cannot be empty.");
       return;
     }
+
     setLoading(true);
     setMessage("");
 
     try {
       const response = await submitCode({ problemId, code, language });
-      const { status, output, error, _id } = response.submission;
-      console.log("Verdict:", status, "| Output:", output, "| ID:", _id);
-
-    //   const question = `Problem: ${problemTitle}\n\nDescription:\n${problemDescription}`;
-    //   const aiResponse = await axiosInstance.post("/gemini/review", {
-    //     question,
-    //     verdict: status,
-    //     code,
-    //   });
-    //   const aiReview = aiResponse.data.review || "No review received.";
-    //   console.log("AI Review Response:", aiResponse.data);
-
+      const { _id } = response.submission;
       navigate(`/review/${_id}`);
     } catch (error) {
       setMessage(error.response?.data?.message || "❌ Submission failed");
@@ -70,17 +60,25 @@ const SubmitAIForm = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto mt-8 p-6 bg-white dark:bg-zinc-900 rounded-lg shadow-lg">
+    <motion.div
+      initial={{ opacity: 0, y: 25 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="max-w-5xl mx-auto mt-8 p-6"
+    >
       <h2 className="text-3xl font-bold mb-6 text-center text-zinc-800 dark:text-white">
         Submit Your Solution
       </h2>
+
       <Link to={`/problems/${problemId}`}>
-        <p className="text-lg text-center text-blue-600 dark:text-blue-400 font-medium mb-6">
-          {problemTitle}{" "}
+        <p className="text-lg text-center text-blue-600 dark:text-blue-400 font-medium mb-6 hover:underline">
+          {problemTitle}
         </p>
       </Link>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form
+        onSubmit={handleSubmit}
+        className="space-y-6 bg-white/70 dark:bg-zinc-900/60 p-6 rounded-xl shadow-lg backdrop-blur-md"
+      >
         <div>
           <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-200 mb-1">
             Language
@@ -97,13 +95,15 @@ const SubmitAIForm = () => {
         </div>
 
         <CodeEditor
-          language={language === "cpp" ? "cpp" : language}
+          language={language}
           code={code}
           onChange={(value) => setCode(value)}
-          className={`mb-4 ${!code.trim() ? "border-red-500" : ""}`}
+          className={`mb-4 border ${
+            !code.trim() ? "border-red-500" : "border-zinc-300"
+          }`}
         />
 
-        <>
+        <div className="text-center">
           <button
             type="submit"
             disabled={loading}
@@ -119,16 +119,18 @@ const SubmitAIForm = () => {
           <p className="text-sm text-pink-500 text-center mt-2">
             Powered by Gemini AI 🤖
           </p>
-        </>
+        </div>
 
         {message && (
-          <div className="mt-4 px-4 py-3 sm:rounded-xl bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 shadow">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="mt-4 px-4 py-3 sm:rounded-xl bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 shadow"
+          >
             <strong className="font-bold">!</strong> {message}
-          </div>
+          </motion.div>
         )}
       </form>
-    </div>
+    </motion.div>
   );
-};
-
-export default SubmitAIForm;
+}
