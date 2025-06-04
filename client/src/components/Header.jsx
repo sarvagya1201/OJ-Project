@@ -1,9 +1,13 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import axiosInstance from "../services/axiosInstance";
 import { logoutUser } from "../services/authService";
 import ThemeToggle from "../components/ThemeToggle";
+import { motion } from "framer-motion";
+
+
+
+const MotionLink = motion(Link);
 
 const Header = () => {
   const { user, setUser } = useAuth();
@@ -21,34 +25,68 @@ const Header = () => {
   };
 
   return (
-    <header className="bg-gray-200 dark:bg-zinc-800 text-black dark:text-white px-4 py-3 flex justify-between items-center shadow">
-      <Link to="/" className="text-xl font-bold flex items-center gap-2">
-         <img src="../../logo.png" alt="Logo" className="h-10 w-auto dark:invert" />
+    <header
+      className="
+        fixed top-0 left-0 right-0 z-50
+        bg-white/30 dark:bg-zinc-900/30 
+        backdrop-blur-md
+        border-b border-white/20 dark:border-zinc-700/50
+        text-black dark:text-white
+        px-6 py-4
+        flex justify-between items-center
+        shadow-md
+      "
+    >
+      <Link to="/" className="flex items-center gap-3 text-2xl font-extrabold select-none">
+        <img
+          src="/logo.png"
+          alt="Algorun Judge Logo"
+          className="h-10 w-auto dark:invert"
+        />
+        
       </Link>
 
       <div className="flex items-center gap-6">
-        <div>
-          <ThemeToggle />
-        </div>
-         
+        <ThemeToggle />
+
         {user ? (
-          <div className="flex items-center gap-4">
-            <span>Hello, {user.name}</span>
-            <button
+          <div className="flex items-center gap-5">
+            <span className="whitespace-nowrap font-semibold">Hello, {user.name}</span>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={handleLogout}
-              className="bg-red-500 px-3 py-1 rounded hover:bg-red-600"
+              className="
+                bg-red-600 hover:bg-red-700
+                text-white font-medium
+                px-4 py-2 rounded-lg
+                shadow-md
+                transition
+                select-none
+              "
+              aria-label="Logout"
             >
               Logout
-            </button>
+            </motion.button>
           </div>
         ) : (
-          <div className="flex gap-4">
-            <Link to="/login" className="hover:underline">
+          <div className="flex gap-6 text-lg font-semibold">
+            <MotionLink
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              to="/login"
+              className="hover:underline transition select-none"
+            >
               Login
-            </Link>
-            <Link to="/register" className="hover:underline">
+            </MotionLink>
+            <MotionLink
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              to="/register"
+              className="hover:underline transition select-none"
+            >
               Register
-            </Link>
+            </MotionLink>
           </div>
         )}
       </div>

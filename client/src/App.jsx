@@ -5,7 +5,7 @@ import Footer from "./components/Footer";
 
 function App() {
   return (
-    <div
+ <div
       className="App flex flex-col min-h-screen 
                 bg-white text-black 
                 dark:bg-zinc-900 dark:text-white 
@@ -14,9 +14,11 @@ function App() {
                 scrollbar-thumb-rounded-full"
     >
       <Header />
-      <main className="flex-grow px-4 py-6">
+
+      <div className="flex-grow pt-16 ">
         <AppRoutes />
-      </main>
+      </div>
+
       <Footer />
     </div>
   );
