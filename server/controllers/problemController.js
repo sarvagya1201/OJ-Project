@@ -70,15 +70,42 @@ export const getAllProblems = async (req, res) => {
 
 // Get a single problem by ID
 export const getProblemById = async (req, res) => {
-  const { id } = req.params;
-
   try {
-    const problem = await Problem.findById(id);
-    if (!problem) return res.status(404).json({ message: "Problem not found" });
+    const problem = await Problem.findById(req.params.id).lean();
 
-    res.status(200).json(problem);
-  } catch (err) {
-    console.error(err);
+    if (!problem) {
+      return res.status(404).json({ message: "Problem not found" });
+    }
+
+    // If query ?safe=true, send limited fields
+    if (req.query.safe === "true") {
+      const {
+        _id,
+        title,
+        description,
+        difficulty,
+        tags,
+        sampleInput,
+        sampleOutput,
+        createdAt,
+      } = problem;
+
+      return res.json({
+        _id,
+        title,
+        description,
+        difficulty,
+        tags,
+        sampleInput,
+        sampleOutput,
+        createdAt,
+      });
+    }
+
+    // Else, return full object
+    res.json(problem);
+  } catch (error) {
+    console.error("Error fetching problem:", error);
     res.status(500).json({ message: "Server error" });
   }
 };

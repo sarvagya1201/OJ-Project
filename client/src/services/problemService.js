@@ -7,8 +7,8 @@ export const getAllProblems = async () => {
 };
 
 export const getProblemById = async (id) => {
-    const response = await axiosInstance.get(`/problems/${id}`);
-    return response.data;
+  const response = await axiosInstance.get(`/problems/${id}?safe=true`);
+  return response.data;
 };
 
 export const addProblem = async (formData) => {

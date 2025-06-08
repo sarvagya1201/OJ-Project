@@ -4,10 +4,11 @@ const MAX_CODE_LENGTH = 10000;
 
 // 🚫 Dangerous keywords per language
 const keywordBlocklist = {
+  python: [
+    "os.system", "subprocess", "eval", "exec", "__import__", "open", "os.remove", "os.unlink", "os.rmdir", "shutil", "pathlib"],
   cpp: ["system", "fork", "exec", "popen", "fopen", "rm", "reboot"],
-  python: ["os.system", "subprocess", "eval", "exec", "__import__", "open", "input"],
-  java: ["Runtime", "ProcessBuilder", "exec", "System.exit"],
-  js: ["eval", "Function", "require('child_process')", "child_process", "process.exit"],
+  java: ["Runtime", "ProcessBuilder", "exec", "System.exit", "Files.readAllBytes", "FileInputStream"],
+  js: ["eval", "Function", "require('child_process')", "child_process", "process.exit", "fs", "require('fs')"]
 };
 
 // 🔐 Code sanitizer
