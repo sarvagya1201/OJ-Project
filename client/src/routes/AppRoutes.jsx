@@ -16,7 +16,7 @@ import ProblemAllSubmissionsPage from "../pages/ProblemAllSubmissionPage";
 import UserDashboardPage from "../pages/UserDashboardPage";
 import SubmitAIPage from "../pages/SubmitAIPage";
 import AiReviewPage from "../pages/AiReviewPage";
-
+import UserManagementPage from "../pages/UserManagementPage";
 const AppRoutes = () => {
   const { user } = useAuth();
   return (
@@ -39,6 +39,7 @@ const AppRoutes = () => {
       <Route path="/submissions" element={<MySubmissionsPage />} />
       <Route path="/user/dashboard" element={<UserDashboardPage />} />
       <Route path="/review/:submissionId" element={<AiReviewPage />} />
+      <Route path="/admin/users" element={<UserManagementPage />} />
 
       </Routes>
     

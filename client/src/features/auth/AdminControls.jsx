@@ -61,6 +61,25 @@ const AdminControls = () => {
       >
         Manage Problems
       </MotionLink>
+      <MotionLink
+        to="/admin/users"
+        variants={buttonVariants}
+        whileHover="hover"
+        whileTap="tap"
+        className="
+          px-5 py-2
+          bg-pink-600 dark:bg-pink-500
+          hover:bg-pink-700 dark:hover:bg-pink-600
+          text-white rounded-md
+          font-semibold
+          shadow-md
+          transition
+          select-none
+          whitespace-nowrap
+        "
+      >
+        User Management
+      </MotionLink>
     </motion.div>
   );
 };
