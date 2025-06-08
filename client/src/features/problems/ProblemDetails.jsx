@@ -66,7 +66,8 @@ const ProblemDetails = () => {
         {problem.title}
       </h1>
       <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-        Difficulty: {problem.difficulty}
+        Difficulty: {problem.difficulty} &nbsp;|&nbsp; Time Limit:{" "}
+        {problem.timeLimit}s &nbsp;|&nbsp; Memory Limit: {problem.memoryLimit}MB
       </p>
 
       <div className="mb-6">
@@ -109,9 +110,19 @@ const ProblemDetails = () => {
       </div>
 
       {problem.tags && (
-        <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
-          <strong>Tags:</strong> {problem.tags.join(", ")}
-        </p>
+        <div className="mb-6">
+          <strong className="text-gray-700 dark:text-gray-400">Tags:</strong>
+          <div className="flex flex-wrap gap-2 mt-1">
+            {problem.tags.map((tag, i) => (
+              <span
+                key={i}
+                className="bg-zinc-300 text-zinc-800 dark:bg-zinc-600 dark:text-white px-3 py-1 rounded-full text-xs font-medium"
+              >
+                #{tag}
+              </span>
+            ))}
+          </div>
+        </div>
       )}
 
       <div className="flex flex-wrap gap-4 mt-6">

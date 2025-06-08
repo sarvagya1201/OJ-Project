@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getProblemById, updateProblemById } from "../../services/problemService";
+import { getProblemForAdmin, updateProblemById } from "../../services/problemService";
 import { motion } from "framer-motion";
 
 const EditProblem = () => {
@@ -28,7 +28,7 @@ const EditProblem = () => {
   useEffect(() => {
     const fetchProblem = async () => {
       try {
-        const problem = await getProblemById(id);
+        const problem = await getProblemForAdmin(id);
         setFormData({
           title: problem.title || "",
           description: problem.description || "",

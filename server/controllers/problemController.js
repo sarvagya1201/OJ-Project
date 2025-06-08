@@ -87,6 +87,8 @@ export const getProblemById = async (req, res) => {
         tags,
         sampleInput,
         sampleOutput,
+        timeLimit,
+        memoryLimit,
         createdAt,
       } = problem;
 
@@ -98,6 +100,8 @@ export const getProblemById = async (req, res) => {
         tags,
         sampleInput,
         sampleOutput,
+        timeLimit,
+        memoryLimit,
         createdAt,
       });
     }
