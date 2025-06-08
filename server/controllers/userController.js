@@ -2,13 +2,71 @@ import Submission from "../models/Submission.js";
 import User from "../models/User.js";
 import moment from "moment";
 
+export const getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find().select("-password");
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to fetch users" });
+  }
+};
+export const makeAdmin = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    user.role = "admin";
+    await user.save();
+
+    res.json({ message: `${user.name} has been promoted to admin.` });
+  } catch (error) {
+    res.status(500).json({ message: "Server error while promoting user" });
+  }
+};
+export const demoteAdmin = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    // Prevent self-demotion (optional but recommended)
+    if (req.user._id.toString() === userId) {
+      return res.status(403).json({ message: "You can't demote yourself." });
+    }
+
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    if (user.role !== 'admin') {
+      return res.status(400).json({ message: 'User is not an admin.' });
+    }
+
+    // Count number of admins
+    const adminCount = await User.countDocuments({ role: 'admin' });
+
+    // Prevent demotion if this is the last admin
+    if (adminCount <= 1) {
+      return res.status(403).json({ message: 'Cannot demote the last remaining admin.' });
+    }
+
+    user.role = 'user';
+    await user.save();
+
+    res.json({ message: `${user.name} has been demoted to user.` });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error while demoting user' });
+  }
+};
+
 
 export const getUserDashboard = async (req, res) => {
   try {
     const userId = req.user._id;
 
     // Fetch all submissions by user
-    const submissions = await Submission.find({ user: userId }).sort({ createdAt: 1 });
+    const submissions = await Submission.find({ user: userId }).sort({
+      createdAt: 1,
+    });
 
     const heatmap = {};
     const solvedProblems = new Set();
@@ -53,12 +111,22 @@ export const getUserDashboard = async (req, res) => {
 
       if (diff === 1 || !lastDate) {
         currentStreak++;
-        if (currDate.isAfter(nowDate.clone().subtract(1, "year"))) currentStreakYear++;
-        if (currDate.isAfter(nowDate.clone().subtract(1, "month"))) currentStreakMonth++;
+        if (currDate.isAfter(nowDate.clone().subtract(1, "year")))
+          currentStreakYear++;
+        if (currDate.isAfter(nowDate.clone().subtract(1, "month")))
+          currentStreakMonth++;
       } else {
         currentStreak = 1;
-        currentStreakYear = currDate.isAfter(nowDate.clone().subtract(1, "year")) ? 1 : 0;
-        currentStreakMonth = currDate.isAfter(nowDate.clone().subtract(1, "month")) ? 1 : 0;
+        currentStreakYear = currDate.isAfter(
+          nowDate.clone().subtract(1, "year")
+        )
+          ? 1
+          : 0;
+        currentStreakMonth = currDate.isAfter(
+          nowDate.clone().subtract(1, "month")
+        )
+          ? 1
+          : 0;
       }
 
       maxStreak = Math.max(maxStreak, currentStreak);
