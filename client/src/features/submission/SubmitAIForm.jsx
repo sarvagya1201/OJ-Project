@@ -17,6 +17,34 @@ export default function SubmitAIForm() {
   const [message, setMessage] = useState("");
   const [problemTitle, setProblemTitle] = useState("");
   const [problemDescription, setProblemDescription] = useState("");
+const boilerplates = {
+    cpp: `#include <iostream>
+using namespace std;
+
+int main() {
+    // your code goes here
+    return 0;
+}`,
+    python: `def main():
+    # your code goes here
+    pass
+
+if __name__ == "__main__":
+    main()`,
+    java: `import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+          // your code goes here
+    }
+}`,
+  };
+  
+    useEffect(() => {
+   
+      setCode(boilerplates[language]);
+    
+  }, [language]);
 
   useEffect(() => {
     const fetchProblem = async () => {
