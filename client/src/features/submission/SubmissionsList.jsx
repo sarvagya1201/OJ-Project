@@ -8,7 +8,7 @@ export default function Submissions() {
   const [submissions, setSubmissions] = useState([]);
   const [viewingCode, setViewingCode] = useState(null);
   const [selectedLang, setSelectedLang] = useState("cpp");
-
+  const [loading, setLoading] = useState(true);
   const langMap = {
     cpp: "cpp",
     python: "python",
@@ -36,6 +36,8 @@ export default function Submissions() {
         setSubmissions(res.data.submissions || []);
       } catch (err) {
         console.error(err);
+      } finally {
+        setLoading(false); 
       }
     };
 
@@ -75,9 +77,7 @@ export default function Submissions() {
               <td className="px-4 py-2 font-semibold">
                 <span
                   className={
-                    s.status === "Accepted"
-                      ? "text-green-600"
-                      : "text-red-500"
+                    s.status === "Accepted" ? "text-green-600" : "text-red-500"
                   }
                 >
                   {s.status}
@@ -110,7 +110,9 @@ export default function Submissions() {
         className="p-6"
       >
         <h2 className="text-2xl font-bold mb-3 text-center">My Submissions</h2>
-        {submissions.length === 0 ? (
+        {loading ? (
+          <p className="text-gray-500 dark:text-gray-400 text-center">Loading...</p>
+        ) :  submissions.length === 0 ? (
           <p className="text-gray-500 dark:text-gray-400 text-center">
             You have not made any submissions yet.
           </p>

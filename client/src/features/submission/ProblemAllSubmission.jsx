@@ -13,6 +13,7 @@ export default function ProblemSubmissions() {
   const [viewingCode, setViewingCode] = useState(null);
   const [selectedLang, setSelectedLang] = useState("cpp");
   const [problemTitle, setProblemTitle] = useState("");
+  const [loading, setLoading] = useState(true);
 
   const langMap = {
     cpp: "cpp",
@@ -22,15 +23,15 @@ export default function ProblemSubmissions() {
 
   const isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
 
- const formatDateTime = (dateStr) => {
-  const date = new Date(dateStr);
-  const dd = String(date.getDate()).padStart(2, "0");
-  const mm = String(date.getMonth() + 1).padStart(2, "0");
-  const yyyy = date.getFullYear();
-  const hh = String(date.getHours()).padStart(2, "0");
-  const min = String(date.getMinutes()).padStart(2, "0");
-  return `${dd}/${mm}/${yyyy} ${hh}:${min}`;
-};
+  const formatDateTime = (dateStr) => {
+    const date = new Date(dateStr);
+    const dd = String(date.getDate()).padStart(2, "0");
+    const mm = String(date.getMonth() + 1).padStart(2, "0");
+    const yyyy = date.getFullYear();
+    const hh = String(date.getHours()).padStart(2, "0");
+    const min = String(date.getMinutes()).padStart(2, "0");
+    return `${dd}/${mm}/${yyyy} ${hh}:${min}`;
+  };
 
   useEffect(() => {
     const fetchProblem = async () => {
@@ -57,6 +58,8 @@ export default function ProblemSubmissions() {
         setOtherSubs(data.otherSubmissions || []);
       } catch (err) {
         console.error(err);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -95,9 +98,7 @@ export default function ProblemSubmissions() {
               <td className="px-4 py-2 font-semibold">
                 <span
                   className={
-                    s.status === "Accepted"
-                      ? "text-green-600"
-                      : "text-red-500"
+                    s.status === "Accepted" ? "text-green-600" : "text-red-500"
                   }
                 >
                   {s.status}
@@ -126,7 +127,11 @@ export default function ProblemSubmissions() {
     </div>
   );
 
-  return (
+  return loading ? (
+    <p className="text-center text-gray-500 dark:text-gray-400">
+      Loading submissions...
+    </p>
+  ) : (
     <>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -141,7 +146,9 @@ export default function ProblemSubmissions() {
 
         <h2 className="text-2xl font-bold mb-3">Your Submissions</h2>
         {mySubs.length === 0 ? (
-          <p className="text-gray-500 dark:text-gray-400">No submissions yet.</p>
+          <p className="text-gray-500 dark:text-gray-400">
+            No submissions yet.
+          </p>
         ) : (
           <SubmissionTable submissions={mySubs} showCode={true} />
         )}

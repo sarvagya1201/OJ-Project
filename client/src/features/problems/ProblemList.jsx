@@ -98,7 +98,7 @@ const ProblemList = () => {
             value={tagInput}
             onChange={(e) => setTagInput(e.target.value)}
             onKeyDown={(e) => {
-              if ((e.key === " " || e.key === "Enter" || e.key === "Tab") && tagInput.trim()) {
+              if ((e.key === " " || e.key === "Enter" || e.key === "Tab" ||e.key === "," ) && tagInput.trim()) {
                 setSearchTags([...searchTags, tagInput.trim()]);
                 setTagInput("");
                 e.preventDefault();
