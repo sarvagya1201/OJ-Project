@@ -8,6 +8,7 @@ import problemRoutes from "./routes/problemRoutes.js";
 import submissionRoutes from "./routes/submissionRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import geminiRoutes from "./routes/geminiRoutes.js";
+import compileRoutes from "./routes/compileRoutes.js";
 
 dotenv.config();
 const app = express();
@@ -32,6 +33,7 @@ app.use("/api/problems", problemRoutes);
 app.use("/api/submissions", submissionRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/gemini", geminiRoutes);
+app.use("/api/compile", compileRoutes);
 
 // Connect to MongoDB
 connectDB();
