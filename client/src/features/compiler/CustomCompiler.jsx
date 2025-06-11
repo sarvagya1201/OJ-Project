@@ -1,30 +1,20 @@
-import React, { useEffect, useState } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
-import { submitCode } from "../../services/submissionService";
-import axiosInstance from "../../services/axiosInstance";
+import React, { useState, useEffect } from "react";
 import CodeEditor from "../../components/CodeEditor";
+import axiosInstance from "../../services/axiosInstance";
 import { motion } from "framer-motion";
 import ReactMarkdown from "react-markdown";
-export default function SubmitForm() {
-  const { problemId } = useParams();
-  const { user } = useAuth();
-  const navigate = useNavigate();
 
+export default function CustomCompilerPage() {
   const [language, setLanguage] = useState("cpp");
   const [code, setCode] = useState("");
   const [input, setInput] = useState("");
   const [output, setOutput] = useState(null);
-  const [problemTitle, setProblemTitle] = useState("");
-  const [message, setMessage] = useState("");
-
   const [isRunning, setIsRunning] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSubmittingAI, setIsSubmittingAI] = useState(false);
+  const [error, setError] = useState("");
   const [tcLoading, setTcLoading] = useState(false);
   const [showTcBlock, setShowTcBlock] = useState(false);
   const [tcResult, setTcResult] = useState("");
-
+  const [message, setMessage] = useState("");
   const boilerplates = {
     cpp: `#include <bits/stdc++.h>
 using namespace std;
@@ -52,20 +42,6 @@ public class Main {
     setCode(boilerplates[language]);
   }, [language]);
 
-  useEffect(() => {
-    const fetchProblem = async () => {
-      try {
-        const res = await axiosInstance.get(`/problems/${problemId}`);
-        setProblemTitle(res.data.title);
-        setInput(res.data.sampleInput || "");
-      } catch (err) {
-        console.error("Error fetching problem:", err);
-        setProblemTitle("Problem not found");
-      }
-    };
-    fetchProblem();
-  }, [problemId]);
-
   const handleRun = async () => {
     if (code.trim() === boilerplates[language].trim()) {
       setMessage("⚠️ Code cannot be empty or just boilerplate.");
@@ -89,40 +65,6 @@ public class Main {
       setIsRunning(false);
     }
   };
-
-  const handleSubmit = async (type = "normal") => {
-    if (!user) {
-      setMessage("⚠️ Please login to submit.");
-      return;
-    }
-
-    if (code.trim() === boilerplates[language].trim()) {
-      setMessage("⚠️ Code cannot be empty or just boilerplate.");
-      return;
-    }
-
-    if (type === "ai") setIsSubmittingAI(true);
-    else setIsSubmitting(true);
-
-    setMessage("");
-
-    try {
-      const res = await submitCode({ problemId, code, language });
-      const { _id } = res.submission;
-
-      if (type === "ai") {
-        navigate(`/review/${_id}`);
-      } else {
-        navigate("/submissions", { state: { highlightedId: _id } });
-      }
-    } catch (err) {
-      setMessage(err.response?.data?.message || "❌ Submission failed");
-    } finally {
-      setIsSubmitting(false);
-      setIsSubmittingAI(false);
-    }
-  };
-
   const handleTCAnalyze = async () => {
     setShowTcBlock(true);
     setTcLoading(true);
@@ -142,15 +84,11 @@ public class Main {
       animate={{ opacity: 1, y: 0 }}
       className="p-6 max-w-7xl mx-auto"
     >
-      <h2 className="text-3xl font-bold text-center text-zinc-800 dark:text-white mb-2">
-        Submit Your Solution
+      <h2 className="text-3xl font-bold text-center text-zinc-800 dark:text-white mb-8">
+        Online Code Compiler
       </h2>
-      <Link to={`/problems/${problemId}`}>
-        <p className="text-lg text-center text-blue-600 dark:text-blue-400 font-medium mb-6 hover:underline">
-          {problemTitle}
-        </p>
-      </Link>
 
+      {/* Language Selector */}
       <div className="mb-4">
         <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-200 mb-1">
           Language
@@ -165,7 +103,7 @@ public class Main {
           <option value="java">Java</option>
         </select>
       </div>
-      {/* Grid layout */}
+
       <div className="grid md:grid-cols-2 gap-6 items-start">
         <div className="max-h-[500px] h-[500px] overflow-y-auto">
           <CodeEditor
@@ -206,7 +144,6 @@ public class Main {
                 </pre>
               </div>
             )}
-
             {message && (
               <div className="text-red-600 dark:text-red-400 font-semibold">
                 ❌ {message}
@@ -215,7 +152,7 @@ public class Main {
           </div>
 
           {/* Buttons - Fixed Size Section */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-3">
             <button
               type="button"
               onClick={handleRun}
@@ -229,40 +166,15 @@ public class Main {
 
             <button
               type="button"
-              onClick={() => handleSubmit("normal")}
-              disabled={isSubmitting}
-              className={`py-2 px-4 text-white font-semibold rounded bg-blue-600 hover:bg-blue-700 transition duration-200 ${
-                isSubmitting ? "opacity-70 cursor-not-allowed" : ""
-              }`}
-            >
-              {isSubmitting ? "Submitting..." : "Submit"}
-            </button>
-
-            <button
-              type="button"
-              onClick={() => handleSubmit("ai")}
-              disabled={isSubmittingAI}
-              className={`relative py-2 px-4 text-white font-semibold rounded-xl bg-gradient-to-r from-purple-600 via-pink-500 to-red-500 shadow-md hover:scale-105 hover:shadow-lg transition duration-300 ease-in-out ${
-                isSubmittingAI ? "opacity-70 cursor-not-allowed" : ""
-              }`}
-              
-            >
-              <span className="absolute top-0 right-0 -mt-2 -mr-2 bg-yellow-300 text-black text-xs font-bold px-2 py-1 rounded-full shadow">
-              New
-            </span>
-              {isSubmittingAI ? "🤖 Reviewing..." : "✨ Submit + AI Review"}
-            </button>
-
-            <button
-              type="button"
               onClick={handleTCAnalyze}
               disabled={tcLoading}
               className={`relative py-2 px-4 text-white font-semibold rounded bg-indigo-600 hover:bg-indigo-700 transition duration-200 ${
                 tcLoading ? "opacity-70 cursor-not-allowed" : ""
               }`}
-            ><span className="absolute top-0 right-0 -mt-2 -mr-2 bg-yellow-300 text-black text-xs font-bold px-2 py-1 rounded-full shadow">
-              New
-            </span>
+            >
+              <span className="absolute top-0 right-0 -mt-2 -mr-2 bg-yellow-300 text-black text-xs font-bold px-2 py-1 rounded-full shadow">
+                New
+              </span>
               {tcLoading ? "Analyzing..." : "📊 Analyze TC"}
             </button>
           </div>
@@ -289,9 +201,7 @@ public class Main {
             </p>
           ) : (
             <div>
-              <ReactMarkdown >
-                {tcResult}
-              </ReactMarkdown>
+              <ReactMarkdown>{tcResult}</ReactMarkdown>
             </div>
           )}
         </div>

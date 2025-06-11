@@ -126,18 +126,16 @@ const ProblemDetails = () => {
       )}
 
       <div className="flex flex-wrap gap-4 mt-6">
-        <Link to={`/submit/${problem._id}`}>
+        {/* <Link to={`/submit/${problem._id}`}>
           <button className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md transition">
             Submit Solution
           </button>
-        </Link>
+        </Link> */}
 
-        <Link to={`/submit-ai/${problem._id}`}>
+        <Link to={`/submit/${problem._id}`}>
           <button className="relative px-6 py-3 bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 text-white rounded-xl shadow-lg hover:scale-105 transform transition duration-300 ease-in-out">
-            <span className="absolute top-0 right-0 -mt-2 -mr-2 bg-yellow-300 text-black text-xs font-bold px-2 py-1 rounded-full shadow">
-              ✨ NEW ✨
-            </span>
-            Submit with AI Review 🚀
+            
+            Submit Solution 
           </button>
         </Link>
 

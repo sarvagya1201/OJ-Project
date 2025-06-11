@@ -1,11 +1,7 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { motion } from "framer-motion";
-import {
-  CloudLightning ,
-  BrainCircuit,
-  LayoutDashboard,
-} from "lucide-react";
+import { CloudLightning, BrainCircuit, LayoutDashboard } from "lucide-react";
 
 const HomePage = () => {
   const { user } = useAuth();
@@ -13,19 +9,23 @@ const HomePage = () => {
   const features = [
     {
       title: "Real-Time Code Judging",
-      description: "Submit your code and get instant feedback with detailed output comparison.",
+      description:
+        "Submit your code and get instant feedback with detailed output comparison.",
       color: "from-blue-400 to-indigo-500",
-      icon: <CloudLightning  className="w-8 h-8 mb-3 text-white" />,
+      icon: <CloudLightning className="w-8 h-8 mb-3 text-white" />,
     },
     {
-      title: "AI Code Review",
-      description: "Let AI review your solution and suggest improvements for cleaner, better code.",
+      title: "AI Code Review + Complexity",
+      description:
+        "Let AI review your solution and get instant Time & Space Complexity analysis for deeper insights.",
       color: "from-purple-500 to-pink-500",
       icon: <BrainCircuit className="w-8 h-8 mb-3 text-white" />,
     },
+
     {
       title: "Personal Dashboard",
-      description: "Track your submissions, monitor streaks, and see your problem-solving growth.",
+      description:
+        "Track your submissions, monitor streaks, and see your problem-solving growth.",
       color: "from-green-400 to-emerald-500",
       icon: <LayoutDashboard className="w-8 h-8 mb-3 text-white" />,
     },
@@ -49,7 +49,10 @@ const HomePage = () => {
         className="backdrop-blur-xl bg-white/30 dark:bg-white/10 rounded-2xl p-10 max-w-2xl w-full shadow-2xl border border-white/30 dark:border-white/20"
       >
         <h1 className="text-4xl font-extrabold text-center text-gray-900 dark:text-white mb-4">
-          Welcome to <span className="text-indigo-600 dark:text-indigo-400">Algorun Judge</span>
+          Welcome to{" "}
+          <span className="text-indigo-600 dark:text-indigo-400">
+            Algorun Judge
+          </span>
         </h1>
         <p className="text-center text-gray-700 dark:text-gray-300 mb-8 text-lg">
           Practice coding problems and get instant feedback — powered by AI.
@@ -58,7 +61,10 @@ const HomePage = () => {
         <div className="flex flex-col md:flex-row justify-center gap-4">
           {!user ? (
             <>
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
                 <Link
                   to="/login"
                   className="w-full block text-center bg-blue-500 text-white px-6 py-3 rounded-lg shadow-lg hover:bg-blue-600 transition"
@@ -66,7 +72,10 @@ const HomePage = () => {
                   Login
                 </Link>
               </motion.div>
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
                 <Link
                   to="/register"
                   className="w-full block text-center bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg hover:bg-green-600 transition"
@@ -74,7 +83,10 @@ const HomePage = () => {
                   Register
                 </Link>
               </motion.div>
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
                 <Link
                   to="/problems"
                   className="w-full block text-center bg-purple-500 text-white px-6 py-3 rounded-lg shadow-lg hover:bg-purple-600 transition"
@@ -85,7 +97,10 @@ const HomePage = () => {
             </>
           ) : (
             <>
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
                 <Link
                   to="/problems"
                   className="w-full block text-center bg-purple-500 text-white px-6 py-3 rounded-lg shadow-lg hover:bg-purple-600 transition"
@@ -93,7 +108,10 @@ const HomePage = () => {
                   Browse Problems
                 </Link>
               </motion.div>
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
                 <Link
                   to="/submissions"
                   className="w-full block text-center bg-blue-700 text-white px-6 py-3 rounded-lg shadow-lg hover:bg-blue-800 transition"
@@ -101,7 +119,10 @@ const HomePage = () => {
                   My Submissions
                 </Link>
               </motion.div>
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
                 <Link
                   to="/user/dashboard"
                   className="w-full block text-center bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg hover:bg-green-700 transition"
@@ -111,6 +132,21 @@ const HomePage = () => {
               </motion.div>
             </>
           )}
+        </div>
+
+        <div className="mt-6 w-full flex justify-center">
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="max-w-xs w-full"
+          >
+            <Link
+              to="/compiler"
+              className="block text-sm font-medium text-center bg-teal-600 text-white px-4 py-3 rounded-lg shadow-lg hover:bg-teal-700 transition truncate"
+            >
+              Code Compiler + TC Analysis
+            </Link>
+          </motion.div>
         </div>
       </motion.div>
 

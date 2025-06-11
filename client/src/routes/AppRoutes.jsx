@@ -14,9 +14,9 @@ import EditProblemPage from "../pages/EditProblemPage";
 import MySubmissionsPage from "../pages/MySubmissionsPage";
 import ProblemAllSubmissionsPage from "../pages/ProblemAllSubmissionPage";
 import UserDashboardPage from "../pages/UserDashboardPage";
-import SubmitAIPage from "../pages/SubmitAIPage";
 import AiReviewPage from "../pages/AiReviewPage";
 import UserManagementPage from "../pages/UserManagementPage";
+import CustomCompilerPage from "../pages/CustomCompilerPage";
 const AppRoutes = () => {
   const { user } = useAuth();
   return (
@@ -35,11 +35,11 @@ const AppRoutes = () => {
       <Route path="/manage-problems" element={user?.role === 'admin' ? <ManageProblemsPage /> : <Navigate to="/problems" />} />
       <Route path="/edit-problem/:id" element={user?.role === 'admin' ? <EditProblemPage /> : <Navigate to="/problems" />} />
       <Route path="/submit/:problemId" element={<SubmitPage />} />
-      <Route path="/submit-ai/:problemId" element={<SubmitAIPage />} />
       <Route path="/submissions" element={<MySubmissionsPage />} />
       <Route path="/user/dashboard" element={<UserDashboardPage />} />
       <Route path="/review/:submissionId" element={<AiReviewPage />} />
       <Route path="/admin/users" element={<UserManagementPage />} />
+      <Route path="/compiler" element={<CustomCompilerPage />} />
 
       </Routes>
     

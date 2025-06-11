@@ -15,6 +15,8 @@ const Review = () => {
   const [aiReview, setAiReview] = useState("");
   const [loadingReview, setLoadingReview] = useState(false);
   const [loadingData, setLoadingData] = useState(true);
+  const [tcAnalysis, setTcAnalysis] = useState("");
+  const [loadingTc, setLoadingTc] = useState(false);
 
   useEffect(() => {
     const fetchSubmissionAndProblem = async () => {
@@ -62,6 +64,26 @@ const Review = () => {
     };
     fetchAiReview();
   }, [problem, submission]);
+  useEffect(() => {
+    const fetchTcAnalysis = async () => {
+      if (!submission || !submission.code) return;
+
+      setLoadingTc(true);
+      try {
+        const { data } = await axiosInstance.post("/gemini/time_comp", {
+          code: submission.code.trim(),
+        });
+        setTcAnalysis(data.result || "No response received.");
+      } catch (err) {
+        console.error("❌ TC Analysis error:", err);
+        setTcAnalysis("❌ Failed to fetch Time & Space Complexity.");
+      } finally {
+        setLoadingTc(false);
+      }
+    };
+
+    fetchTcAnalysis();
+  }, [submission]);
 
   if (loadingData)
     return (
@@ -109,17 +131,19 @@ const Review = () => {
           <br />
           {submission.language}
         </div>
-      <div>
-  <span className="font-semibold">✅ Verdict:</span>
-  <br />
-  <span
-    className={`font-semibold text-lg md:text-xl ${
-      submission.status === "Accepted" ? "text-green-600" : "text-red-500"
-    }`}
-  >
-    {submission.status}
-  </span>
-</div>
+        <div>
+          <span className="font-semibold">✅ Verdict:</span>
+          <br />
+          <span
+            className={`font-semibold text-lg md:text-xl ${
+              submission.status === "Accepted"
+                ? "text-green-600"
+                : "text-red-500"
+            }`}
+          >
+            {submission.status}
+          </span>
+        </div>
         <div>
           <span className="font-semibold">⚡ Run Time:</span>
           <br />
@@ -170,6 +194,50 @@ const Review = () => {
                 }}
               >
                 {aiReview}
+              </ReactMarkdown>
+            )}
+          </motion.div>
+        </TabItem>
+        <TabItem title="Time & Space Complexity" icon={HiCode}>
+          <motion.div
+            className="mt-4 border p-6 rounded-xl shadow-lg bg-white dark:bg-zinc-900 prose dark:prose-invert min-h-[200px]"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+          >
+            <h2 className="text-2xl font-bold mb-4">Time & Space Complexity</h2>
+
+            {loadingTc ? (
+              <div className="flex items-center justify-center space-x-3 text-blue-600 dark:text-blue-400">
+                <div className="w-7 h-7 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                <span className="font-medium text-lg">
+                  Analyzing complexity...
+                </span>
+              </div>
+            ) : (
+              <ReactMarkdown
+                components={{
+                  h1: ({ node, ...props }) => (
+                    <h1 className="text-3xl font-bold" {...props} />
+                  ),
+                  h2: ({ node, ...props }) => (
+                    <h2 className="text-2xl font-semibold" {...props} />
+                  ),
+                  code: ({ node, ...props }) => (
+                    <code
+                      className="bg-gray-100 dark:bg-zinc-800 px-2 py-1 rounded font-mono"
+                      {...props}
+                    />
+                  ),
+                  pre: ({ node, ...props }) => (
+                    <pre
+                      className="bg-gray-100 dark:bg-zinc-800 rounded p-3 overflow-auto"
+                      {...props}
+                    />
+                  ),
+                }}
+              >
+                {tcAnalysis}
               </ReactMarkdown>
             )}
           </motion.div>

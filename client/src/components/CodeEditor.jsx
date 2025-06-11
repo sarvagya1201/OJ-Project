@@ -2,9 +2,12 @@ import Editor from "@monaco-editor/react";
 
 const CodeEditor = ({ language, code, onChange }) => {
   return (
-    <div className="border rounded shadow">
+    <div
+      className="h-full w-full border rounded-xl overflow-hidden shadow"
+      style={{ maxHeight: "100%" }}
+    >
       <Editor
-        height="400px"
+        height="100%"
         language={language}
         theme="vs-dark"
         value={code}
@@ -13,6 +16,7 @@ const CodeEditor = ({ language, code, onChange }) => {
           fontSize: 14,
           minimap: { enabled: false },
           automaticLayout: true,
+          scrollBeyondLastLine: false,
         }}
       />
     </div>
